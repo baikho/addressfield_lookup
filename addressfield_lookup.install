@@ -9,11 +9,15 @@
  * Implements hook_schema().
  */
 function addressfield_lookup_schema() {
+  $schema = [];
+
   // Address lookup results cache.
-  $schema['cache_addressfield_lookup_addresses'] = drupal_get_schema_unprocessed('system', 'cache');
+  // @todo Convert to Drupal 8 Cache API.
+  //$schema['cache_addressfield_lookup_addresses'] = drupal_get_schema_unprocessed('system', 'cache');
 
   // Address details cache.
-  $schema['cache_addressfield_lookup_address_details'] = drupal_get_schema_unprocessed('system', 'cache');
+  // @todo Convert to Drupal 8 Cache API.
+  //$schema['cache_addressfield_lookup_address_details'] = drupal_get_schema_unprocessed('system', 'cache');
 
   return $schema;
 }
@@ -22,13 +26,13 @@ function addressfield_lookup_schema() {
  * Implements hook_requirements().
  */
 function addressfield_lookup_requirements($phase) {
-  $requirements = array();
+  $requirements = [];
 
   if ($phase == 'runtime') {
     // Add a requirement for a working default addressfield lookup service.
-    $requirements['addressfield_lookup_default_service'] = array(
+    $requirements['addressfield_lookup_default_service'] = [
       'title' => t('Address Field Lookup - Default service'),
-    );
+    ];
 
     // Determine the status of the requirement.
     if (!addressfield_lookup_get_default_service()) {
