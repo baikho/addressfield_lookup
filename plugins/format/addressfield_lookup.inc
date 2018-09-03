@@ -130,7 +130,7 @@ function addressfield_lookup_addressfield_format_generate(&$format, &$address, $
           $format['locality_block']['#access'] = FALSE;
 
           // Hide additional fields if the settings require.
-          if (variable_get('addressfield_lookup_addressfield_hide_extra_fields', TRUE)) {
+          if (\Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_addressfield_hide_extra_fields')) {
             $format['name_block']['#access'] = FALSE;
             $format['organisation_block']['#access'] = FALSE;
           }
@@ -202,7 +202,7 @@ function addressfield_lookup_addressfield_postal_code_validate($element, &$form_
   if (!empty($element['#value'])) {
     // Get the address element from the form.
     $array_parents = array_slice($element['#parents'], 0, -1);
-    $address = drupal_array_get_nested_value($form_state['values'], $array_parents);
+    $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
 
     // Build an array of search terms.
     $search_terms = array();
@@ -225,10 +225,10 @@ function addressfield_lookup_addressfield_postal_code_validate($element, &$form_
     else {
       // Get the address element from the form.
       $array_parents = array_slice($element['#parents'], 0, -1);
-      $address = drupal_array_get_nested_value($form_state['values'], $array_parents);
+      $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
 
       // Set the postal code as form element value.
-      form_set_value($element, $element['#value'], $form_state);
+      $form_state->setValueForElement($element, $element['#value']);
 
       // Prepare list options from the lookup results.
       $address['addressfield_lookup_addresses'] = _addressfield_lookup_prepare_options($addresses);
@@ -261,8 +261,8 @@ function addressfield_lookup_addressfield_postal_code_validate($element, &$form_
           // Note: form_state['input'] must be updated so that
           // addressfield_lookup_addressfield_format_generate() has correct
           // information during the rebuild.
-          drupal_array_set_nested_value($form_state['values'], array_merge($array_parents, array($key)), $value, TRUE);
-          drupal_array_set_nested_value($form_state['input'], array_merge($array_parents, array($key)), $value, TRUE);
+          \Drupal\Component\Utility\NestedArray::setValue($form_state['values'], array_merge($array_parents, array($key)), $value, TRUE);
+          \Drupal\Component\Utility\NestedArray::setValue($form_state['input'], array_merge($array_parents, array($key)), $value, TRUE);
         }
       }
     }
@@ -287,7 +287,7 @@ function addressfield_lookup_addressfield_cancel_search_validate($element, &$for
   if ($element['#id'] == $form_state['triggering_element']['#id']) {
     // Get the address element from the form.
     $array_parents = array_slice($element['#parents'], 0, -1);
-    $address = drupal_array_get_nested_value($form_state['values'], $array_parents);
+    $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
 
     // Set the mode.
     $address['addressfield_lookup_mode'] = 'cancel';
@@ -302,8 +302,8 @@ function addressfield_lookup_addressfield_cancel_search_validate($element, &$for
     // Note: form_state['input'] must be updated so that
     // addressfield_lookup_addressfield_format_generate() has correct
     // information during the rebuild.
-    drupal_array_set_nested_value($form_state['values'], array_merge($array_parents, array('addressfield_lookup_mode')), 'cancel', TRUE);
-    drupal_array_set_nested_value($form_state['input'], array_merge($array_parents, array('addressfield_lookup_mode')), 'cancel', TRUE);
+    \Drupal\Component\Utility\NestedArray::setValue($form_state['values'], array_merge($array_parents, array('addressfield_lookup_mode')), 'cancel', TRUE);
+    \Drupal\Component\Utility\NestedArray::setValue($form_state['input'], array_merge($array_parents, array('addressfield_lookup_mode')), 'cancel', TRUE);
 
     $form_state['rebuild'] = TRUE;
   }
@@ -317,13 +317,13 @@ function addressfield_lookup_addressfield_search_by_postal_code_validate($elemen
   if ($element['#id'] == $form_state['triggering_element']['#id']) {
     // Get the address element from the form.
     $array_parents = array_slice($element['#parents'], 0, -1);
-    $address = drupal_array_get_nested_value($form_state['values'], $array_parents);
+    $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
 
     // Set the mode.
     $address['addressfield_lookup_mode'] = 'search';
 
     $form_state['addressfield'][$address['element_key']] = array_diff_key($address, array('element_key' => ''));
-    drupal_array_set_nested_value($form_state['values'], array_merge($array_parents, array('addressfield_lookup_addresses')), NULL, TRUE);
+    \Drupal\Component\Utility\NestedArray::setValue($form_state['values'], array_merge($array_parents, array('addressfield_lookup_addresses')), NULL, TRUE);
 
     $form_state['addressfield'][$address['element_key']]['addressfield_lookup_addresses'] = NULL;
     $form_state['addressfield'][$address['element_key']]['addressfield_lookup_mode'] = 'search';
@@ -332,8 +332,8 @@ function addressfield_lookup_addressfield_search_by_postal_code_validate($elemen
     // Note: form_state['input'] must be updated so that
     // addressfield_lookup_addressfield_format_generate() has correct
     // information during the rebuild.
-    drupal_array_set_nested_value($form_state['values'], array_merge($array_parents, array('addressfield_lookup_mode')), 'search', TRUE);
-    drupal_array_set_nested_value($form_state['input'], array_merge($array_parents, array('addressfield_lookup_mode')), 'search', TRUE);
+    \Drupal\Component\Utility\NestedArray::setValue($form_state['values'], array_merge($array_parents, array('addressfield_lookup_mode')), 'search', TRUE);
+    \Drupal\Component\Utility\NestedArray::setValue($form_state['input'], array_merge($array_parents, array('addressfield_lookup_mode')), 'search', TRUE);
 
     $form_state['rebuild'] = TRUE;
   }

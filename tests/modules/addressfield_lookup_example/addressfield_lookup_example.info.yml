@@ -1,0 +1,7 @@
+name: 'Address Field Lookup Example'
+description: 'Provides an example address field lookup service.'
+package: 'Address Field Lookup'
+core: 8.x
+dependencies:
+  - addressfield_lookup:addressfield_lookup
+type: module

@@ -33,7 +33,7 @@ class AddressFieldLookupFieldTest extends AddressFieldLookupWebTestBase {
    * @var array
    */
   protected $testAddress = array(
-    LANGUAGE_NONE => array(
+    \Drupal\Core\Language\Language::LANGCODE_NOT_SPECIFIED => array(
       array(
         'organisation_name' => 'Company',
         'first_name' => 'Joe',
@@ -76,7 +76,7 @@ class AddressFieldLookupFieldTest extends AddressFieldLookupWebTestBase {
    * Test the address field lookup interaction with the create node form.
    */
   public function testAddressFieldLookupNodeCreate() {
-    $langcode = LANGUAGE_NONE;
+    $langcode = \Drupal\Core\Language\Language::LANGCODE_NOT_SPECIFIED;
 
     // Check permissions and get page contents.
     $this->getWithPermissions(array("create {$this->testContentType['machine_name']} content"), "node/add/{$this->testContentType['machine_name']}");
@@ -92,7 +92,7 @@ class AddressFieldLookupFieldTest extends AddressFieldLookupWebTestBase {
    * Test the address field lookup interaction with the edit node form.
    */
   public function testAddressFieldLookupNodeEdit() {
-    $langcode = LANGUAGE_NONE;
+    $langcode = \Drupal\Core\Language\Language::LANGCODE_NOT_SPECIFIED;
 
     // Create an example node with a populated address.
     $test_node = $this->drupalCreateNode(array(

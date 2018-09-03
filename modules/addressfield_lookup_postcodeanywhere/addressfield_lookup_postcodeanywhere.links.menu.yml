@@ -1,0 +1,5 @@
+addressfield_lookup_postcodeanywhere.config_form:
+  route_name: addressfield_lookup_postcodeanywhere.config_form
+  title: 'Postcode Anywhere Settings'
+  weight: -10
+  description: 'Configure postcode anywhere.'

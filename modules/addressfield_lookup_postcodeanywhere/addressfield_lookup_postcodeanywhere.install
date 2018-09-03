@@ -28,11 +28,14 @@ function addressfield_lookup_postcodeanywhere_requirements($phase) {
     );
 
     // Determine the status of the requirement.
-    if (!variable_get('addressfield_lookup_postcodeanywhere_license', FALSE)) {
+    if (!\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {
       // No default service available.
       $requirements['addressfield_lookup_postcodeanywhere']['value'] = t('Not configured');
       $requirements['addressfield_lookup_postcodeanywhere']['severity'] = REQUIREMENT_WARNING;
-      $requirements['addressfield_lookup_postcodeanywhere']['description'] = t('Postcode Anywhere has not been configured. Please enter the license on the <a href="@config_url">configuration page</a>', array('@config_url' => url('admin/config/regional/addressfield-lookup/postcodeanywhere/configure')));
+      // @FIXME
+// url() expects a route name or an external URI.
+// $requirements['addressfield_lookup_postcodeanywhere']['description'] = t('Postcode Anywhere has not been configured. Please enter the license on the <a href="@config_url">configuration page</a>', array('@config_url' => url('admin/config/regional/addressfield-lookup/postcodeanywhere/configure')));
+
     }
     else {
       $requirements['addressfield_lookup_postcodeanywhere']['value'] = t('OK');
@@ -59,16 +62,36 @@ function addressfield_lookup_postcodeanywhere_update_7000() {
  */
 function addressfield_lookup_postcodeanywhere_update_7001() {
   // Login.
-  $postcodeanywhere_login = variable_get('postcodeanywhere_login', FALSE);
-  if (FALSE !== $postcodeanywhere_login && FALSE !== variable_get('addressfield_lookup_postcodeanywhere_login', FALSE)) {
-    variable_set('addressfield_lookup_postcodeanywhere_login', $postcodeanywhere_login);
-    variable_del('postcodeanywhere_login');
+  // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// $postcodeanywhere_login = variable_get('postcodeanywhere_login', FALSE);
+
+  if (FALSE !== $postcodeanywhere_login && FALSE !== \Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_login')) {
+    \Drupal::configFactory()->getEditable('addressfield_lookup_postcodeanywhere.settings')->set('addressfield_lookup_postcodeanywhere_login', $postcodeanywhere_login)->save();
+    // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// variable_del('postcodeanywhere_login');
+
   }
 
   // License.
-  $postcodeanywhere_license = variable_get('postcodeanywhere_license', FALSE);
-  if (FALSE !== $postcodeanywhere_license && FALSE !== variable_get('addressfield_lookup_postcodeanywhere_license', FALSE)) {
-    variable_set('addressfield_lookup_postcodeanywhere_license', $postcodeanywhere_license);
-    variable_del('postcodeanywhere_license');
+  // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// $postcodeanywhere_license = variable_get('postcodeanywhere_license', FALSE);
+
+  if (FALSE !== $postcodeanywhere_license && FALSE !== \Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {
+    \Drupal::configFactory()->getEditable('addressfield_lookup_postcodeanywhere.settings')->set('addressfield_lookup_postcodeanywhere_license', $postcodeanywhere_license)->save();
+    // @FIXME
+// // @FIXME
+// // This looks like another module's variable. You'll need to rewrite this call
+// // to ensure that it uses the correct configuration object.
+// variable_del('postcodeanywhere_license');
+
   }
 }

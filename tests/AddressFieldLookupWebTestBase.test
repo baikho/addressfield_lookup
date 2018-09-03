@@ -79,7 +79,14 @@ abstract class AddressFieldLookupWebTestBase extends DrupalWebTestCase {
       'translatable' => 0,
       'type' => 'addressfield',
     );
-    field_create_field($field);
+    // @FIXME
+// Fields and field instances are now exportable configuration entities, and
+// the Field Info API has been removed.
+// 
+// 
+// @see https://www.drupal.org/node/2012896
+// field_create_field($field);
+
 
     // Attach an instance of it.
     $instance = array(
@@ -117,7 +124,14 @@ abstract class AddressFieldLookupWebTestBase extends DrupalWebTestCase {
         'weight' => 7,
       ),
     );
-    field_create_instance($instance);
+    // @FIXME
+// Fields and field instances are now exportable configuration entities, and
+// the Field Info API has been removed.
+// 
+// 
+// @see https://www.drupal.org/node/2012896
+// field_create_instance($instance);
+
   }
 
 }

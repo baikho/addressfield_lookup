@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains the PCAPredictAdapter class.
- */
+namespace Drupal\addressfield_lookup_postcodeanywhere;
 
 /**
  * Adapater for the PCAPredict API.

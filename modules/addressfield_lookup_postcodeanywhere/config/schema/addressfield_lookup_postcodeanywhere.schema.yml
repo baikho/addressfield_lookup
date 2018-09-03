@@ -1,0 +1,10 @@
+addressfield_lookup_postcodeanywhere.settings:
+  type: mapping
+  label: Instellingen
+  mapping:
+    addressfield_lookup_postcodeanywhere_license:
+      type: boolean
+    addressfield_lookup_postcodeanywhere_login:
+      type: boolean
+    addressfield_lookup_postcodeanywhere_country_quality:
+      type: integer

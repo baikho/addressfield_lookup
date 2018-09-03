@@ -1,0 +1,10 @@
+addressfield_lookup.services_overview_form:
+  route_name: addressfield_lookup.services_overview_form
+  title: Services
+  weight: 0
+  base_route: addressfield_lookup.services_overview_form
+addressfield_lookup.settings_form:
+  route_name: addressfield_lookup.settings_form
+  title: Settings
+  weight: 1
+  base_route: addressfield_lookup.services_overview_form

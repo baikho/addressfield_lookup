@@ -1,9 +1,5 @@
 <?php
-
-/**
- * @file
- * Contains AddressFieldLookupExample.
- */
+namespace Drupal\addressfield_lookup_example;
 
 /**
  * An example Adddress Field Lookup Service.

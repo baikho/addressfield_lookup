@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains AddressFieldLookupPostcodeAnywhere.
- */
+namespace Drupal\addressfield_lookup_postcodeanywhere;
 
 /**
  * Address Field Lookup service for Postcode anywhere.

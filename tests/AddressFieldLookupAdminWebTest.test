@@ -64,8 +64,12 @@ class AddressFieldLookupAdminWebTest extends AddressFieldLookupWebTestBase {
     $this->getWithPermissions(array('administer addressfield lookup services'), 'admin/config/regional/addressfield-lookup/settings');
 
     // Check UI elements present.
-    $this->assertFieldByName('addressfield_lookup_addressfield_hide_extra_fields', variable_get('addressfield_lookup_addressfield_hide_extra_fields', TRUE), 'Hide extra fields checkbox is displayed');
-    $this->assertFieldByName('addressfield_lookup_cache_length', variable_get('addressfield_lookup_cache_length', ADDRESSFIELD_LOOKUP_CACHE_LENGTH), 'Cache length field is displayed');
+    $this->assertFieldByName('addressfield_lookup_addressfield_hide_extra_fields', \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_addressfield_hide_extra_fields'), 'Hide extra fields checkbox is displayed');
+    // @FIXME
+// Could not extract the default value because it is either indeterminate, or
+// not scalar. You'll need to provide a default value in
+// config/install/addressfield_lookup.settings.yml and config/schema/addressfield_lookup.schema.yml.
+$this->assertFieldByName('addressfield_lookup_cache_length', \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_cache_length'), 'Cache length field is displayed');
   }
 
 }

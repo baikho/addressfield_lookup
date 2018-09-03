@@ -1,7 +1,0 @@
-name = Address Field Lookup Example
-description = Provides an example address field lookup service.
-package = Address Field Lookup
-core = 7.x
-files[] = addressfield_lookup_example.inc
-
-dependencies[] = addressfield_lookup

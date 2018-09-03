@@ -89,7 +89,7 @@ function hook_addressfield_lookup_format_update(array $format, array $address) {
  * @see addressfield_lookup_get_addresses
  */
 function hook_addressfield_lookup_get_addresses_cache_id_update($cache_id, $country) {
-  global $user;
+  $user = \Drupal::currentUser();
 
   // Append the current user ID to the cache ID.
   $cache_id .= ':' . $user->uid;

@@ -6,25 +6,6 @@
  */
 
 /**
- * Implements hook_menu().
- */
-function addressfield_lookup_postcodeanywhere_menu() {
-  $items = array();
-
-  $items['admin/config/regional/addressfield-lookup/postcodeanywhere/configure'] = array(
-    'title' => 'Postcode Anywhere Settings',
-    'description' => 'Configure postcode anywhere.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('addressfield_lookup_postcodeanywhere_config_form'),
-    'access arguments' => array('administer addressfield lookup services'),
-    'file' => 'includes/addressfield_lookup_postcodeanywhere.admin.inc',
-    'weight' => -10,
-  );
-
-  return $items;
-}
-
-/**
  * Implements hook_addressfield_lookup_service_info().
  */
 function addressfield_lookup_postcodeanywhere_addressfield_lookup_service_info() {
@@ -54,18 +35,18 @@ function addressfield_lookup_postcodeanywhere_addressfield_lookup_service_info()
  * @see hook_addressfield_lookup_service_info()
  */
 function addressfield_lookup_postcodeanywhere_create($service_info, $country = 'GB') {
-  global $language;
+  $language = \Drupal::languageManager()->getCurrentLanguage();
 
   $postcode_anywhere_service = &drupal_static(__FUNCTION__);
 
   // Check the postcode anywhere configuration variables exist.
-  if (!variable_get('addressfield_lookup_postcodeanywhere_license', FALSE)) {
+  if (!\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {
     throw new Exception('Postcode Anywhere has not been configured.');
   }
 
   // Instantiate the API class.
   if (!isset($postcode_anywhere_service[$country])) {
-    $pca_predict = new PCAPredictAdapter(variable_get('addressfield_lookup_postcodeanywhere_license', FALSE), variable_get('addressfield_lookup_postcodeanywhere_login', FALSE), $language->name, 'Everything', $country);
+    $pca_predict = new PCAPredictAdapter(\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license'), \Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_login'), $language->name, 'Everything', $country);
     $postcode_anywhere_service[$country] = new $service_info['class']($pca_predict);
   }
 
@@ -176,7 +157,16 @@ function addressfield_lookup_postcodeanywhere_standard_widget_refresh($form, $fo
   unset($element['_weight']);
 
   // Display the current message queue in the element prefix.
-  $element['#prefix'] .= theme('status_messages');
+  // @FIXME
+// theme() has been renamed to _theme() and should NEVER be called directly.
+// Calling _theme() directly can alter the expected output and potentially
+// introduce security issues (see https://www.drupal.org/node/2195739). You
+// should use renderable arrays instead.
+// 
+// 
+// @see https://www.drupal.org/node/2195739
+// $element['#prefix'] .= theme('status_messages');
+
 
   // Replace the address field widget with the updated widget and focus on the
   // new country select list.
@@ -211,7 +201,7 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
   if ($element['#id'] == $form_state['triggering_element']['#id']) {
     // Get the address element from the form.
     $array_parents = array_slice($element['#parents'], 0, -1);
-    $address = drupal_array_get_nested_value($form_state['values'], $array_parents);
+    $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
 
     if (!empty($element['#value'])) {
       // The first part of the ID is the actual address ID. The second part is
@@ -273,8 +263,8 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
               // Note: form_state['input'] must be updated so that
               // addressfield_lookup_addressfield_format_generate() has correct
               // information during the rebuild.
-              drupal_array_set_nested_value($form_state['values'], array_merge($array_parents, array($key)), $value, TRUE);
-              drupal_array_set_nested_value($form_state['input'], array_merge($array_parents, array($key)), $value, TRUE);
+              \Drupal\Component\Utility\NestedArray::setValue($form_state['values'], array_merge($array_parents, array($key)), $value, TRUE);
+              \Drupal\Component\Utility\NestedArray::setValue($form_state['input'], array_merge($array_parents, array($key)), $value, TRUE);
             }
           }
 
@@ -300,7 +290,7 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
  *   Array of ISO2 country codes.
  */
 function _addressfield_lookup_postcodeanywhere_get_countries($reset = FALSE) {
-  global $language;
+  $language = \Drupal::languageManager()->getCurrentLanguage();
 
   $countries = &drupal_static(__FUNCTION__);
 
@@ -310,24 +300,24 @@ function _addressfield_lookup_postcodeanywhere_get_countries($reset = FALSE) {
   }
 
   // Get the quality setting.
-  $quality = variable_get('addressfield_lookup_postcodeanywhere_country_quality', 4);
+  $quality = \Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_country_quality');
 
   // Build the cache ID we'll use for the countries list.
   $countries_cache_id = 'pcapredict:countries:' . $quality;
 
   // Check the cache bin for the address details.
-  if (($cached_countries = cache_get($countries_cache_id, 'cache_addressfield_lookup_postcodeanywhere_country_data')) && !$reset) {
+  if (($cached_countries = \Drupal::cache('cache_addressfield_lookup_postcodeanywhere_country_data')->get($countries_cache_id)) && !$reset) {
     $countries = $cached_countries->data;
     return $countries;
   }
 
   // Check the postcode anywhere configuration variables exist.
-  if (!variable_get('addressfield_lookup_postcodeanywhere_license', FALSE)) {
+  if (!\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {
     throw new Exception('Postcode Anywhere has not been configured.');
   }
 
   // Get the API wrapper.
-  $pca_predict = new PCAPredictAdapter(variable_get('addressfield_lookup_postcodeanywhere_license', FALSE), variable_get('addressfield_lookup_postcodeanywhere_login', FALSE), $language->name);
+  $pca_predict = new PCAPredictAdapter(\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license'), \Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_login'), $language->name);
 
   // Get and parse the countries list.
   $api_countries = $pca_predict->getCountryData();
@@ -350,7 +340,7 @@ function _addressfield_lookup_postcodeanywhere_get_countries($reset = FALSE) {
 
   // Cache the countries list. Note the missing cache length, we'll just keep
   // this permanently until the next cache clear.
-  cache_set($countries_cache_id, $countries, 'cache_addressfield_lookup_postcodeanywhere_country_data');
+  \Drupal::cache('cache_addressfield_lookup_postcodeanywhere_country_data')->set($countries_cache_id, $countries);
 
   return $countries;
 }

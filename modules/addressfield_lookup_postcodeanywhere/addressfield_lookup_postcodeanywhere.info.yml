@@ -1,0 +1,7 @@
+name: 'Address Field Lookup Postcode Anywhere'
+description: 'Provides a PCA Predict (formerly Postcode Anywhere) based address field lookup service.'
+package: 'Address Field Lookupe'
+core: 8.x
+dependencies:
+  - addressfield_lookup:addressfield_lookup
+type: module

@@ -50,7 +50,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
    */
   protected function getExampleServiceDefinition() {
     // Get the service array from the example module.
-    $example_service_info = module_invoke('addressfield_lookup_example', 'addressfield_lookup_service_info');
+    $example_service_info = \Drupal::moduleHandler()->invoke('addressfield_lookup_example', 'addressfield_lookup_service_info');
 
     // Set the module and service name.
     $example_service_info['example']['module'] = 'addressfield_lookup_example';

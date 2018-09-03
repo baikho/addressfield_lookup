@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains the PCAPredict abstract class.
- */
+namespace Drupal\addressfield_lookup_postcodeanywhere;
 
 /**
  * Abstract class for interacting with the PCA Predict API.

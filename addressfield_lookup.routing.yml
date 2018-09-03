@@ -1,0 +1,14 @@
+addressfield_lookup.services_overview_form:
+  path: /admin/config/regional/addressfield-lookup
+  defaults:
+    _title: 'Address Field Lookup'
+    _form: \Drupal\addressfield_lookup\Form\AddressfieldLookupServicesOverviewForm
+  requirements:
+    _permission: 'administer addressfield lookup services'
+addressfield_lookup.settings_form:
+  path: /admin/config/regional/addressfield-lookup/settings
+  defaults:
+    _title: Settings
+    _form: \Drupal\addressfield_lookup\Form\AddressfieldLookupSettingsForm
+  requirements:
+    _permission: 'administer addressfield lookup services'
