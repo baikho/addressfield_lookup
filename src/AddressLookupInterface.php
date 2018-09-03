@@ -1,14 +1,11 @@
 <?php
 
-/**
- * @file
- * All interfaces required by the Address Field lookup module.
- */
+namespace Drupal\addressfield_lookup;
 
 /**
  * Interface that all Address Field lookup services need to implement.
  */
-interface AddressFieldLookupInterface {
+interface AddressLookupInterface {
 
   /**
    * Lookup addresses for the given search term.
