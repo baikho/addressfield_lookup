@@ -1,14 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains AddressFieldLookupFieldTest.
- */
+namespace Drupal\Tests\addressfield_lookup\Functional;
 
 /**
- * Defines a class for testing field interactions for Address Field Lookup.
+ * Tests the field interactions of the Address Field Lookup module.
+ *
+ * @group addressfield_lookup
  */
-class AddressFieldLookupFieldTest extends AddressFieldLookupWebTestBase {
+class FieldTest extends AddressFieldLookupBrowserTestBase {
 
   /**
    * Name of the test address field.
@@ -32,32 +31,17 @@ class AddressFieldLookupFieldTest extends AddressFieldLookupWebTestBase {
    *
    * @var array
    */
-  protected $testAddress = array(
-    \Drupal\Core\Language\Language::LANGCODE_NOT_SPECIFIED => array(
-      array(
-        'organisation_name' => 'Company',
-        'first_name' => 'Joe',
-        'last_name' => 'Bloggs',
-        'country' => 'GB',
-        'thoroughfare' => 'Street address 1',
-        'premise' => 'Street Address 2',
-        'locality' => 'Town/City',
-        'administrative_area' => 'County',
-        'postal_code' => 'SW1 1AA',
-      ),
-    ),
-  );
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Field functionality tests',
-      'description' => 'Tests the field interactions of the Address Field Lookup module.',
-      'group' => 'Address Field Lookup',
-    );
-  }
+  protected $testAddress = [
+    'organisation_name' => 'Company',
+    'first_name' => 'Joe',
+    'last_name' => 'Bloggs',
+    'country' => 'GB',
+    'thoroughfare' => 'Street address 1',
+    'premise' => 'Street Address 2',
+    'locality' => 'Town/City',
+    'administrative_area' => 'County',
+    'postal_code' => 'SW1 1AA',
+  ];
 
   /**
    * {@inheritdoc}

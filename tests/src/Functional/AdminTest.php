@@ -1,25 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains AddressFieldLookupWebTest.
- */
+namespace Drupal\Tests\addressfield_lookup\Functional;
 
 /**
- * Defines a class for testing the Address Field Lookup module admin UI.
+ * Tests the administrative interface of the Address Field Lookup module.
+ *
+ * @group addressfield_lookup
  */
-class AddressFieldLookupAdminWebTest extends AddressFieldLookupWebTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Address Field Lookup administration',
-      'description' => 'Tests the administrative interface of the Address Field Lookup module.',
-      'group' => 'Address Field Lookup',
-    );
-  }
+class AdminTest extends AddressFieldLookupBrowserTestBase {
 
   /**
    * Test the address field lookup services overview page.

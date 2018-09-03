@@ -1,27 +1,18 @@
 <?php
 
-/**
- * @file
- * Contains AddressFieldLookupWebTestBase.
- */
+namespace Drupal\Tests\addressfield_lookup\Functional;
+
+use Drupal\Tests\BrowserTestBase;
 
 /**
- * Defines a base class for testing the Address Field Lookup module.
+ * Provides a base class for Addressfield lookup functional tests.
  */
-abstract class AddressFieldLookupWebTestBase extends DrupalWebTestCase {
+abstract class AddressFieldLookupBrowserTestBase extends BrowserTestBase {
 
   /**
    * {@inheritdoc}
    */
-  protected $profile = 'testing';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    // Ensure address field lookup and the example implementation are enabled.
-    parent::setUp('addressfield_lookup', 'addressfield_lookup_example');
-  }
+  public $modules = ['addressfield_lookup', 'addressfield_lookup_example'];
 
   /**
    * Retrieves a path making sure a set of permissions is required to access it.
@@ -40,8 +31,8 @@ abstract class AddressFieldLookupWebTestBase extends DrupalWebTestCase {
    *   An array containing additional HTTP request headers, each formatted as
    *   "name: value".
    *
-   * @see \DrupalWebTestCase::drupalGet()
-   * @see \DrupalWebTestCase::drupalCreateUser()
+   * @see \Drupal\Tests\BrowserTestBase::drupalGet()
+   * @see \Drupal\Tests\user\Traits\UserCreationTrait::createUser()
    */
   protected function getWithPermissions(array $permissions, $path, array $options = array(), array $headers = array()) {
     $this->drupalGet($path, $options, $headers);

@@ -1,10 +1,21 @@
 <?php
-namespace Drupal\addressfield_lookup_example;
+
+namespace Drupal\addressfield_lookup_example\Plugin\AddressLookup;
+
+use Drupal\addressfield_lookup\LookupInterface;
 
 /**
  * An example Adddress Field Lookup Service.
+ *
+ * @AddressLookup(
+ *   id = "example",
+ *   label = @Translation("Example"),
+ *   description = @Translation("Provides an example address field lookup service."),
+ *   factory = "addressfield_lookup_example_create",
+ *   test_data = "TS1 1ST",
+ * )
  */
-class AddressFieldLookupExample implements AddressFieldLookupInterface {
+class Example implements LookupInterface {
 
   /**
    * A mock set of lookup results.

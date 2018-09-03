@@ -1,12 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains AddressFieldLookupWebTest.
- */
+namespace Drupal\addressfield_lookup;
 
 /**
- * Defines a class for testing the Address Field Lookup module API functions.
+ * Tests the base functionality of the Address Field Lookup module.
  */
 class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
 
@@ -30,17 +27,6 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
    * @var string
    */
   protected $invalidCountryCode = 'XX';
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Base functionality tests',
-      'description' => 'Tests the base functionality of the Address Field Lookup module.',
-      'group' => 'Address Field Lookup',
-    );
-  }
 
   /**
    * Returns a service definition array for the example address lookup service.
