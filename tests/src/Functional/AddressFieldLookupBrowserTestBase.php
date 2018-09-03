@@ -12,7 +12,7 @@ abstract class AddressFieldLookupBrowserTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public $modules = ['addressfield_lookup', 'addressfield_lookup_example'];
+  public static $modules = ['addressfield_lookup', 'addressfield_lookup_example'];
 
   /**
    * Retrieves a path making sure a set of permissions is required to access it.

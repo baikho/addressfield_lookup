@@ -1,8 +1,10 @@
 addressfield_lookup.settings:
-  type: mapping
-  label: Instellingen
+  type: config_object
+  label: 'Addressfield Lookup settings'
   mapping:
-    addressfield_lookup_addressfield_hide_extra_fields:
+    addressfield_hide_extra_fields:
       type: boolean
-    addressfield_lookup_default_service:
-      type: 'NULL'
+    default_service:
+      type: string
+    cache_length:
+      type: integer

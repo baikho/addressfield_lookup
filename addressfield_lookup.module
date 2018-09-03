@@ -5,8 +5,6 @@
  * Provides hooks and functions for address field lookup.
  */
 
-define('ADDRESSFIELD_LOOKUP_CACHE_LENGTH', 3600);
-
 /**
  * Implements hook_help().
  */
@@ -23,17 +21,6 @@ function addressfield_lookup_help($path, $arg) {
 
       return $output;
   }
-}
-
-/**
- * Implements hook_theme().
- */
-function addressfield_lookup_theme() {
-  return array(
-    'addressfield_lookup_services_overview_form' => array(
-      'render element' => 'form',
-    ),
-  );
 }
 
 /**

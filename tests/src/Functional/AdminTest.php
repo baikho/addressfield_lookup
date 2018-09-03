@@ -10,19 +10,22 @@ namespace Drupal\Tests\addressfield_lookup\Functional;
 class AdminTest extends AddressFieldLookupBrowserTestBase {
 
   /**
-   * Test the address field lookup services overview page.
+   * Tests the address field lookup services overview page.
    *
-   * Page found at admin/config/regional/addressfield-lookup.
+   * Page found at /admin/config/regional/addressfield-lookup.
    */
   public function testAddressFieldLookupServicesPage() {
     // Check permissions and get page contents.
-    $this->getWithPermissions(array('administer addressfield lookup services'), 'admin/config/regional/addressfield-lookup');
+    $this->getWithPermissions(['administer addressfield lookup services'], 'admin/config/regional/addressfield-lookup');
 
-    // Check UI correct for all defined services.
-    foreach (addressfield_lookup_services() as $service_name => $service_details) {
-      $this->assertText($service_details['name']);
-      $this->assertText('(Machine name: ' . $service_name . ')');
-      $this->assertFieldByName('addressfield_lookup_default_service', $service_name, "Radio button for {$service_details['name']} is displayed");
+    // Check if all expected services are displayed.
+    $expected_services = [
+      'example' => 'Example',
+    ];
+    foreach ($expected_services as $id => $label) {
+      $this->assertSession()->pageTextContains($label);
+      $this->assertSession()->pageTextContains('(Machine name: ' . $id . ')');
+      $this->assertFieldByName('default_service', $id, "Radio button for $label is displayed.");
     }
 
     // Check for submit buttons.
@@ -30,34 +33,32 @@ class AdminTest extends AddressFieldLookupBrowserTestBase {
     $this->assertFieldByName('op', t('Test default service'), 'Test button is displayed');
 
     // Test the save configuration button and set the default service.
-    $this->drupalPost('admin/config/regional/addressfield-lookup', array('addressfield_lookup_default_service' => 'example'), t('Save configuration'));
-    $this->assertText(t('Configuration saved.'));
+    $this->submitForm(['default_service' => 'example'], 'Save configuration');
+    $this->assertSession()->pageTextContains('Configuration saved.');
 
     // Load the default service and test it is the example service.
-    $default_service = addressfield_lookup_get_default_service();
-    $this->assertEqual($default_service['name'], t('Example'));
+    // @todo
+    //$default_service = addressfield_lookup_get_default_service();
+    //$this->assertEqual($default_service['name'], t('Example'));
 
     // Test the default service is working.
-    $this->drupalPost('admin/config/regional/addressfield-lookup', array(), t('Test default service'));
-    $this->assertRaw(t('The default service (%service_name) test was successful.', array('%service_name' => $default_service['name'])), 'Default service tested and working.');
+    $this->markTestIncomplete('testing default service is not implemented yet');
+    $this->submitForm([], 'Test default service');
+    $this->assertSession()->pageTextContains('The default service (Example) test was successful.', 'Default service tested and working.');
   }
 
   /**
-   * Test the address field lookup settings page.
+   * Tests the address field lookup settings page.
    *
-   * Page found at admin/config/regional/addressfield-lookup/settings.
+   * Page found at /admin/config/regional/addressfield-lookup/settings.
    */
   public function testAddressFieldLookupSettingsPage() {
     // Check permissions and get page contents.
-    $this->getWithPermissions(array('administer addressfield lookup services'), 'admin/config/regional/addressfield-lookup/settings');
+    $this->getWithPermissions(['administer addressfield lookup services'], 'admin/config/regional/addressfield-lookup/settings');
 
-    // Check UI elements present.
-    $this->assertFieldByName('addressfield_lookup_addressfield_hide_extra_fields', \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_addressfield_hide_extra_fields'), 'Hide extra fields checkbox is displayed');
-    // @FIXME
-// Could not extract the default value because it is either indeterminate, or
-// not scalar. You'll need to provide a default value in
-// config/install/addressfield_lookup.settings.yml and config/schema/addressfield_lookup.schema.yml.
-$this->assertFieldByName('addressfield_lookup_cache_length', \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_cache_length'), 'Cache length field is displayed');
+    // Check if the UI elements are displayed.
+    $this->assertFieldByName('addressfield_hide_extra_fields', TRUE, 'Hide extra fields checkbox is displayed');
+    $this->assertFieldByName('cache_length', 3600, 'Cache length field is displayed');
   }
 
 }
