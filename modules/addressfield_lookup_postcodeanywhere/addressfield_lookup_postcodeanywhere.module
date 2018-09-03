@@ -181,7 +181,7 @@ function addressfield_lookup_postcodeanywhere_standard_widget_refresh($form, $fo
  */
 function addressfield_lookup_postcodeanywhere_addressfield_lookup_get_addresses_cache_id_update($cache_id, $country) {
   // Get the PCA Predict API object.
-  $addressfield_lookup_services = addressfield_lookup_services();
+  $addressfield_lookup_services = \Drupal::service('plugin.manager.address_lookup')->getDefinitions();
   $pca_predict = addressfield_lookup_postcodeanywhere_create($addressfield_lookup_services['postcodeanywhere'], $country);
 
   // Append the last id value to the cache ID if present.
@@ -218,7 +218,7 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
           drupal_set_message(t('More information is needed. Please select the area your postal code is in.'));
 
           // Get the PCA Predict API object.
-          $addressfield_lookup_services = addressfield_lookup_services();
+          $addressfield_lookup_services = \Drupal::service('plugin.manager.address_lookup')->getDefinitions();
           $pca_predict = addressfield_lookup_postcodeanywhere_create($addressfield_lookup_services['postcodeanywhere'], $address['country']);
 
           // Set the ID of this search result for use in the next lookup step.

@@ -103,7 +103,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
    */
   public function testAddressFieldLookupServices() {
     // Get the list of services.
-    $services = addressfield_lookup_services();
+    $services = \Drupal::service('plugin.manager.address_lookup')->getDefinitions();
 
     // Test the list of services.
     $this->assertTrue(is_array($services) && !empty($services));

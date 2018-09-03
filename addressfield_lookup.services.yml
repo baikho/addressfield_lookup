@@ -1,0 +1,4 @@
+services:
+  plugin.manager.address_lookup:
+    class: Drupal\addressfield_lookup\AddressLookupManager
+    parent: default_plugin_manager

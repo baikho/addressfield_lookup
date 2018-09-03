@@ -6,42 +6,6 @@
  */
 
 /**
- * Defines an address field lookup service.
- *
- * @return array
- *   An associative array of address field lookup services, keyed by machine
- *   name. The array contains the following values:
- *     - 'name' A human readable name for the service
- *     - 'class' A string specifying the PHP class that implements the
- *       AddressFieldLookupInterface interface.
- *     - 'object factory' A function responsible for instantiating the PHP
- *       class defined above. Takes this config array and a country code as
- *       parameters.
- *     - 'description' A brief description of the address field lookup service.
- *     - 'config path' The path to the configuration form for this service. The
- *       path will be used as an inline link on the address field lookup module
- *       configuration form. Note that the module implementing the hook must
- *       also define the menu URL and callback.
- *     - 'test data' An example value that will be used to test the status of
- *       connectivity to the service.
- *
- * @see addressfield_lookup_services()
- * @see hook_addressfield_lookup_service_info_alter()
- */
-function hook_addressfield_lookup_service_info() {
-  return array(
-    'my_awesome_postcode' => array(
-      'name' => t('My awesome postcode API'),
-      'class' => 'MyAwesomePostcodeAPI',
-      'object factory' => 'my_awesome_postcode_create',
-      'description' => t('Provides an address field lookup service based on integration with the My Awesome Postcode API.'),
-      'config path' => 'admin/config/regional/addressfield-lookup/my-awesome-addressfield-lookup-service/configure',
-      'test data' => 'BH15 1HH',
-    ),
-  );
-}
-
-/**
  * Alters the list of address field lookup services defined by other modules.
  *
  * @param array $addressfield_lookup_services

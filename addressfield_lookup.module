@@ -47,15 +47,6 @@ function addressfield_lookup_flush_caches() {
 }
 
 /**
- * Implements hook_ctools_plugin_directory().
- */
-function addressfield_lookup_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'addressfield') {
-    return 'plugins/' . $plugin;
-  }
-}
-
-/**
  * Implements hook_field_widget_form_alter().
  *
  * Use the right form elements identifiers needed for "#limit_validation_errors"
@@ -86,57 +77,6 @@ function addressfield_lookup_field_widget_form_alter(&$element, &$form_state, $c
 }
 
 /**
- * Returns an array of addressfield lookup services.
- *
- * @param bool $reset
- *   Reset the addressfield lookup services static cache.
- *
- * @return array $addressfield_lookup_services
- *   An associative array of addressfield lookup service arrays keyed by
- *   the machine name.
- */
-function addressfield_lookup_services($reset = FALSE) {
-  $addressfield_lookup_services = &drupal_static(__FUNCTION__);
-
-  // Check if we have statically cached services and no reset flag was passed.
-  if (isset($addressfield_lookup_services) && !$reset) {
-    return $addressfield_lookup_services;
-  }
-
-  // Otherwise we need to get the list of services.
-  $addressfield_lookup_services = array();
-
-  // Get the services defined in other modules.
-  foreach (\Drupal::moduleHandler()->getImplementations('addressfield_lookup_service_info') as $module) {
-    foreach (\Drupal::moduleHandler()->invoke($module, 'addressfield_lookup_service_info') as $service_name => $addressfield_lookup_service) {
-      // Add the module name to the service info.
-      $addressfield_lookup_service['module'] = $module;
-
-      // Add the service machine name to the service info.
-      $addressfield_lookup_service['machine_name'] = $service_name;
-
-      // Add to the list.
-      $addressfield_lookup_services[$service_name] = $addressfield_lookup_service;
-    }
-  }
-
-  // Allow other modules to alter the list of services.
-  \Drupal::moduleHandler()->alter('addressfield_lookup_service_info', $addressfield_lookup_services);
-
-  // Loop through the defined services.
-  foreach ($addressfield_lookup_services as $key => $addressfield_lookup_service) {
-    // Ensure that the service class implements the correct interface.
-    if (!in_array('AddressFieldLookupInterface', class_implements($addressfield_lookup_service['class']))) {
-      // The wrong interface has been used so remove the service.
-      unset($addressfield_lookup_services[$key]);
-      \Drupal::logger('addressfield_lookup')->error('Service <em>%name</em> has been disabled as the defined class does not implement the AddressFieldLookupInterface interface.', array('%name' => $addressfield_lookup_service['name']));
-    }
-  }
-
-  return $addressfield_lookup_services;
-}
-
-/**
  * Get the default address field lookup service.
  *
  * @return mixed $addressfield_lookup_default_service
@@ -151,7 +91,7 @@ function addressfield_lookup_get_default_service() {
   }
 
   // If we have no statically cached default service, we need to get it.
-  $addressfield_lookup_services = addressfield_lookup_services();
+  $addressfield_lookup_services = \Drupal::service('plugin.manager.address_lookup')->getDefinitions();
 
   // Get the default service name.
   $default_service_name = \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_default_service');

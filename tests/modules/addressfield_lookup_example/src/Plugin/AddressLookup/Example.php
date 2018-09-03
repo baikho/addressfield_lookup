@@ -2,7 +2,7 @@
 
 namespace Drupal\addressfield_lookup_example\Plugin\AddressLookup;
 
-use Drupal\addressfield_lookup\LookupInterface;
+use Drupal\addressfield_lookup\AddressLookupInterface;
 
 /**
  * An example Adddress Field Lookup Service.
@@ -15,7 +15,7 @@ use Drupal\addressfield_lookup\LookupInterface;
  *   test_data = "TS1 1ST",
  * )
  */
-class Example implements LookupInterface {
+class Example implements AddressLookupInterface {
 
   /**
    * A mock set of lookup results.
