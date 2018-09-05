@@ -193,7 +193,7 @@ function addressfield_lookup_get_addresses($search_term, $country = NULL, $reset
   }
 
   // Check the cache bin for the address details.
-  if (($cached_addresses = \Drupal::cache('cache_addressfield_lookup_addresses')->get($addresses_cache_id)) && !$reset) {
+  if (($cached_addresses = \Drupal::cache('addressfield_lookup_addresses')->get($addresses_cache_id)) && !$reset) {
     // There is cached data so return it.
     $addresses[$search_term] = $cached_addresses->data;
     return $addresses[$search_term];
@@ -208,12 +208,8 @@ function addressfield_lookup_get_addresses($search_term, $country = NULL, $reset
         $addresses[$search_term] = $lookup_results;
 
         // Cache the addresses.
-        // @FIXME
-// Could not extract the default value because it is either indeterminate, or
-// not scalar. You'll need to provide a default value in
-// config/install/addressfield_lookup.settings.yml and config/schema/addressfield_lookup.schema.yml.
-$cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_cache_length');
-        \Drupal::cache('cache_addressfield_lookup_addresses')->set($addresses_cache_id, $addresses[$search_term], $cache_length);
+        $cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('cache_length');
+        \Drupal::cache('addressfield_lookup_addresses')->set($addresses_cache_id, $addresses[$search_term], $cache_length);
       }
       else {
         $addresses[$search_term] = array();
@@ -285,7 +281,7 @@ function addressfield_lookup_get_address_details($address_id, $reset = FALSE) {
   $address_details_cache_id = $addressfield_lookup_default_service['machine_name'] . ':' . $address_id;
 
   // Check the cache bin for the address details.
-  if (($cached_address_details = \Drupal::cache('cache_addressfield_lookup_address_details')->get($address_details_cache_id)) && !$reset) {
+  if (($cached_address_details = \Drupal::cache('addressfield_lookup_address_details')->get($address_details_cache_id)) && !$reset) {
     // There is cached data so return it.
     $address_details[$address_id] = $cached_address_details->data;
     return $address_details[$address_id];
@@ -301,12 +297,8 @@ function addressfield_lookup_get_address_details($address_id, $reset = FALSE) {
       $address_details[$address_id] = $addressfield_lookup_service_object->getAddressDetails($address_id);
 
       // Cache the address details.
-      // @FIXME
-// Could not extract the default value because it is either indeterminate, or
-// not scalar. You'll need to provide a default value in
-// config/install/addressfield_lookup.settings.yml and config/schema/addressfield_lookup.schema.yml.
-$cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_cache_length');
-      \Drupal::cache('cache_addressfield_lookup_address_details')->set($address_details_cache_id, $address_details[$address_id], $cache_length);
+      $cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('cache_length');
+      \Drupal::cache('addressfield_lookup_address_details')->set($address_details_cache_id, $address_details[$address_id], $cache_length);
 
       return $address_details[$address_id];
     }

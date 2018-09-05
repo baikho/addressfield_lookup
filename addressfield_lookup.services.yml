@@ -1,4 +1,20 @@
 services:
+  # Plugin manager.
   plugin.manager.address_lookup:
     class: Drupal\addressfield_lookup\AddressLookupManager
     parent: default_plugin_manager
+
+  # Cache bins.
+  cache.addressfield_lookup_addresses:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [addressfield_lookup_addresses]
+
+  cache.addressfield_lookup_address_details:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [addressfield_lookup_address_details]

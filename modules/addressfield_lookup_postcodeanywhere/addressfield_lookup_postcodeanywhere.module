@@ -306,7 +306,7 @@ function _addressfield_lookup_postcodeanywhere_get_countries($reset = FALSE) {
   $countries_cache_id = 'pcapredict:countries:' . $quality;
 
   // Check the cache bin for the address details.
-  if (($cached_countries = \Drupal::cache('cache_addressfield_lookup_postcodeanywhere_country_data')->get($countries_cache_id)) && !$reset) {
+  if (($cached_countries = \Drupal::cache('addressfield_lookup_postcodeanywhere_country_data')->get($countries_cache_id)) && !$reset) {
     $countries = $cached_countries->data;
     return $countries;
   }
@@ -340,7 +340,7 @@ function _addressfield_lookup_postcodeanywhere_get_countries($reset = FALSE) {
 
   // Cache the countries list. Note the missing cache length, we'll just keep
   // this permanently until the next cache clear.
-  \Drupal::cache('cache_addressfield_lookup_postcodeanywhere_country_data')->set($countries_cache_id, $countries);
+  \Drupal::cache('addressfield_lookup_postcodeanywhere_country_data')->set($countries_cache_id, $countries);
 
   return $countries;
 }
