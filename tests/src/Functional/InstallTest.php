@@ -17,35 +17,14 @@ class InstallTest extends BrowserTestBase {
   public static $modules = [];
 
   /**
-   * Module handler to ensure installed modules.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  public $moduleHandler;
-
-  /**
-   * Module installer.
-   *
-   * @var \Drupal\Core\Extension\ModuleInstallerInterface
-   */
-  public $moduleInstaller;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-    $this->moduleHandler = $this->container->get('module_handler');
-    $this->moduleInstaller = $this->container->get('module_installer');
-  }
-
-  /**
-   * Tests module is installable.
+   * Tests if the module is installable.
    */
   public function testInstallation() {
-    $this->assertFalse($this->moduleHandler->moduleExists('addressfield_lookup'), 'Module is not installed yet.');
-    $this->assertTrue($this->moduleInstaller->install(['addressfield_lookup']), 'Installation successful.');
-    $this->assertTrue($this->moduleHandler->moduleExists('addressfield_lookup'), 'Module is installed.');
+    $this->assertFalse($this->container->get('module_handler')->moduleExists('addressfield_lookup'), 'Module is not installed yet.');
+    $this->assertTrue($this->container->get('module_installer')->install(['addressfield_lookup']), 'Installation successful.');
+    // The module handler is reinstantiated after each module install, so
+    // therefore it should no longer be obtained from $this->container.
+    $this->assertTrue(\Drupal::service('module_handler')->moduleExists('addressfield_lookup'), 'Module is installed.');
   }
 
 }
