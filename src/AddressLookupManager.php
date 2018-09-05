@@ -6,11 +6,26 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Exception;
 
 /**
  * Manages address lookup plugins.
  */
 class AddressLookupManager extends DefaultPluginManager implements AddressLookupManagerInterface {
+
+  /**
+   * A list of previously retrieved addresses, listed per search term.
+   *
+   * @var array
+   */
+  protected $addresses = [];
+
+  /**
+   * A list of previously retrieved address details, listed per address ID.
+   *
+   * @var array
+   */
+  protected $addressDetails = [];
 
   /**
    * Constructs a new AddressLookupManager object.
@@ -65,15 +80,13 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
       return FALSE;
     }
 
-    $addresses = &drupal_static(__FUNCTION__);
-
     // Return the statically cached results if present.
-    if (isset($addresses[$search_term]) && !$reset) {
-      return $addresses[$search_term];
+    if (isset($this->addresses[$search_term]) && !$reset) {
+      return $this->addresses[$search_term];
     }
 
     // If there are no statically cached results, do the search.
-    $addresses = [];
+    $this->addresses[$search_term] = [];
 
     // Get the default service ID.
     $service_id = $this->getDefaultId();
@@ -101,8 +114,8 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     // Check the cache bin for the address details.
     if (($cached_addresses = \Drupal::cache('addressfield_lookup_addresses')->get($addresses_cache_id)) && !$reset) {
       // There is cached data so return it.
-      $addresses[$search_term] = $cached_addresses->data;
-      return $addresses[$search_term];
+      $this->addresses[$search_term] = $cached_addresses->data;
+      return $this->addresses[$search_term];
     }
 
     // There is no static or Drupal cache data. Do the lookup.
@@ -111,17 +124,17 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
       if ($service = $this->getDefault($country)) {
         // Do the search.
         if ($lookup_results = $service->lookup($search_term)) {
-          $addresses[$search_term] = $lookup_results;
+          $this->addresses[$search_term] = $lookup_results;
 
           // Cache the addresses.
           $cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('cache_length');
-          \Drupal::cache('addressfield_lookup_addresses')->set($addresses_cache_id, $addresses[$search_term], $cache_length);
+          \Drupal::cache('addressfield_lookup_addresses')->set($addresses_cache_id, $this->addresses[$search_term], $cache_length);
         }
         else {
-          $addresses[$search_term] = [];
+          $this->addresses[$search_term] = [];
         }
 
-        return $addresses[$search_term];
+        return $this->addresses[$search_term];
       }
       else {
         // No service could be instantiated so bail out.
@@ -144,11 +157,9 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
       return FALSE;
     }
 
-    $address_details = &drupal_static(__FUNCTION__);
-
     // Return the statically cached details if present.
-    if (isset($address_details[$address_id]) && !$reset) {
-      return $address_details[$address_id];
+    if (isset($this->addressDetails[$address_id]) && !$reset) {
+      return $this->addressDetails[$address_id];
     }
 
     // If there are no statically details do the retrieval.
@@ -168,24 +179,24 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     // Check the cache bin for the address details.
     if (($cached_address_details = \Drupal::cache('addressfield_lookup_address_details')->get($address_details_cache_id)) && !$reset) {
       // There is cached data so return it.
-      $address_details[$address_id] = $cached_address_details->data;
-      return $address_details[$address_id];
+      $this->addressDetails[$address_id] = $cached_address_details->data;
+      return $this->addressDetails[$address_id];
     }
 
-    $address_details = [];
+    $this->address_details[$address_id] = [];
 
     // There is no static or Drupal cache data. Do the address retrieval.
     try {
       // Get the default service object.
       if ($service = $this->getDefault()) {
         // Get the address details from the service.
-        $address_details[$address_id] = $service->getAddressDetails($address_id);
+        $this->addressDetails[$address_id] = $service->getAddressDetails($address_id);
 
         // Cache the address details.
         $cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_cache_length');
-        \Drupal::cache('addressfield_lookup_address_details')->set($address_details_cache_id, $address_details[$address_id], $cache_length);
+        \Drupal::cache('addressfield_lookup_address_details')->set($address_details_cache_id, $this->addressDetails[$address_id], $cache_length);
 
-        return $address_details[$address_id];
+        return $this->addressDetails[$address_id];
       }
       else {
         // No service could be instantiated so bail out.
