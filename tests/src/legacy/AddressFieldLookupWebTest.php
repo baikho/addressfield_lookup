@@ -149,36 +149,6 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
   }
 
   /**
-   * Test the address lookup functionality.
-   */
-  public function testAddressFieldLookupGetAddresses() {
-    // Test with a valid search term.
-    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->validSearchTerm);
-
-    // Check there is a result.
-    $this->assertTrue(is_array($addresses) && !empty($addresses));
-
-    // Test the format of the result.
-    foreach ($addresses as $address) {
-      foreach ($this->getAddressResultKeys() as $key) {
-        $this->assertTrue(isset($address[$key]) && !empty($address[$key]));
-      }
-    }
-
-    // Test with an invalid search term.
-    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->invalidSearchTerm);
-
-    // Check there is not a result.
-    $this->assertTrue(is_array($addresses) && empty($addresses));
-
-    // Test with a valid country code.
-    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->validSearchTerm, $this->invalidCountryCode);
-
-    // Check there is not a result.
-    $this->assertTrue(is_array($addresses) && empty($addresses));
-  }
-
-  /**
    * Test the address details fetch functionality.
    */
   public function testAddressFieldLookupGetAddressDetails() {

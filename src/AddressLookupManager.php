@@ -49,7 +49,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
    * {@inheritdoc}
    */
   public function getDefaultId() {
-    $default_service_name = \Drupal::config('addressfield_lookup.settings')->get('default_service');
+    $default_service_name = $this->configGet('default_service');
 
     // If there is no default set, assume the only service available is default.
     if (!$default_service_name) {
@@ -107,12 +107,12 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     }
 
     // Allow the default service module to alter the cache ID.
-    if ($updated_cache_id = \Drupal::moduleHandler()->invoke($service_definition['provider'], 'addressfield_lookup_get_addresses_cache_id_update', [$addresses_cache_id, $country])) {
+    if ($updated_cache_id = $this->moduleHandler->invoke($service_definition['provider'], 'addressfield_lookup_get_addresses_cache_id_update', [$addresses_cache_id, $country])) {
       $addresses_cache_id = $updated_cache_id;
     }
 
     // Check the cache bin for the address details.
-    if (($cached_addresses = \Drupal::cache('addressfield_lookup_addresses')->get($addresses_cache_id)) && !$reset) {
+    if (($cached_addresses = $this->getCacheBin('addressfield_lookup_addresses')->get($addresses_cache_id)) && !$reset) {
       // There is cached data so return it.
       $this->addresses[$search_term] = $cached_addresses->data;
       return $this->addresses[$search_term];
@@ -127,8 +127,8 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
           $this->addresses[$search_term] = $lookup_results;
 
           // Cache the addresses.
-          $cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('cache_length');
-          \Drupal::cache('addressfield_lookup_addresses')->set($addresses_cache_id, $this->addresses[$search_term], $cache_length);
+          $cache_length = $this->getRequestTime() + $this->configGet('cache_length');
+          $this->getCacheBin('addressfield_lookup_addresses')->set($addresses_cache_id, $this->addresses[$search_term], $cache_length);
         }
         else {
           $this->addresses[$search_term] = [];
@@ -143,7 +143,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     }
     catch (Exception $e) {
       // Failed to get addresses due to an exception, better log it.
-      \Drupal::logger('addressfield_lookup')->error('Address lookup failed. Reason: @reason', array('@reason' => $e->getMessage()));
+      $this->getLogger()->error('Address lookup failed. Reason: @reason', array('@reason' => $e->getMessage()));
       return FALSE;
     }
   }
@@ -177,7 +177,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     $address_details_cache_id = $service_id . ':' . $address_id;
 
     // Check the cache bin for the address details.
-    if (($cached_address_details = \Drupal::cache('addressfield_lookup_address_details')->get($address_details_cache_id)) && !$reset) {
+    if (($cached_address_details = $this->getCacheBin('addressfield_lookup_address_details')->get($address_details_cache_id)) && !$reset) {
       // There is cached data so return it.
       $this->addressDetails[$address_id] = $cached_address_details->data;
       return $this->addressDetails[$address_id];
@@ -193,8 +193,8 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
         $this->addressDetails[$address_id] = $service->getAddressDetails($address_id);
 
         // Cache the address details.
-        $cache_length = REQUEST_TIME + \Drupal::config('addressfield_lookup.settings')->get('addressfield_lookup_cache_length');
-        \Drupal::cache('addressfield_lookup_address_details')->set($address_details_cache_id, $this->addressDetails[$address_id], $cache_length);
+        $cache_length = $this->getRequestTime() + $this->configGet('cache_length');
+        $this->getCacheBin('addressfield_lookup_address_details')->set($address_details_cache_id, $this->addressDetails[$address_id], $cache_length);
 
         return $this->addressDetails[$address_id];
       }
@@ -205,7 +205,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     }
     catch (Exception $e) {
       // Failed to get address details due to an exception, better log it.
-      \Drupal::logger('addressfield_lookup')->error('Address details retrieval failed. Reason: @reason', array('@reason' => $e->getMessage()));
+      $this->getLogger()->error('Address details retrieval failed. Reason: @reason', array('@reason' => $e->getMessage()));
       return FALSE;
     }
   }
@@ -223,9 +223,46 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     $service_definition = $this->getDefinition($service_id);
 
     // Invoke the update hook (if it exists) in the default service module.
-    if ($format_updates = \Drupal::moduleHandler()->invoke($service_definition['provider'], 'addressfield_lookup_format_update', [$format, $address])) {
+    if ($format_updates = $this->moduleHandler->invoke($service_definition['provider'], 'addressfield_lookup_format_update', [$format, $address])) {
       $format = $format_updates;
     }
+  }
+
+  /**
+   * Returns the requested cache bin.
+   *
+   * @param string $bin
+   *   The cache bin for which the cache object should be returned.
+   *
+   * @return \Drupal\Core\Cache\CacheBackendInterface
+   *   The cache object associated with the specified bin.
+   */
+  protected function getCacheBin($bin) {
+    return \Drupal::cache($bin);
+  }
+
+  /**
+   * Returns the logger object for addressfield_lookup channel.
+   *
+   * @return \Psr\Log\LoggerInterface
+   *   The logger for "addressfield_lookup".
+   */
+  protected function getLogger() {
+    return \Drupal::logger('addressfield_lookup');
+  }
+
+  /**
+   * @todo document.
+   */
+  protected function getRequestTime() {
+    return \Drupal::time()->getRequestTime();
+  }
+
+  /**
+   * @todo document.
+   */
+  protected function configGet($key) {
+    return \Drupal::config('addressfield_lookup.settings')->get($key);
   }
 
 }
