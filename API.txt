@@ -21,7 +21,7 @@ API VERSION 2.0
   details in the above bullet point and the example module which can be found
   in tests/modules/addressfield_lookup_example.
 
-* The functions addressfield_lookup_get_addresses() and
-  addressfield_lookup_get_address_details() no longer accept a $show_errors
+* The functions \Drupal::service('plugin.manager.address_lookup')->getAddresses() and
+  \Drupal::service('plugin.manager.address_lookup')->getAddressDetails() no longer accept a $show_errors
   parameter. The 2nd parameter on both functions is now the cache reset
   parameter. See addressfield_lookup.module for more details.

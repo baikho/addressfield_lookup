@@ -22,7 +22,7 @@ function addressfield_lookup_addressfield_format_generate(&$format, &$address, $
   // selected country has a useable postcode field.
   if ($context['mode'] == 'form' && _addressfield_lookup_country_format_has_postal_code($format)) {
     // Check there is a default 'address field lookup service'.
-    if (addressfield_lookup_get_default_service()) {
+    if (\Drupal::service('plugin.manager.address_lookup')->getDefaultId()) {
       // Get the address wrapper ID.
       $wrapper_id = $format['#wrapper_id'];
 
@@ -46,7 +46,7 @@ function addressfield_lookup_addressfield_format_generate(&$format, &$address, $
         // Check if there is already an address.
         if (!empty($address['postal_code']) && !empty($address['locality'])) {
           // Check if we already have some address results.
-          $addresses = addressfield_lookup_get_addresses($address['postal_code'], $address['country']);
+          $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($address['postal_code'], $address['country']);
 
           // Address defined, use the prefilled addressfield form.
           if (!empty($address['thoroughfare'])) {
@@ -190,7 +190,7 @@ function addressfield_lookup_addressfield_format_generate(&$format, &$address, $
     }
 
     // Get any format updates from the default address lookup service.
-    addressfield_lookup_get_format_updates($format, $address);
+    \Drupal::service('plugin.manager.address_lookup')->getFormatUpdates($format, $address);
   }
 }
 
@@ -216,7 +216,7 @@ function addressfield_lookup_addressfield_postal_code_validate($element, &$form_
     $search_terms[] = $element['#value'];
 
     // Perform an address lookup for this postcode.
-    $addresses = addressfield_lookup_get_addresses(implode(', ', $search_terms), $address['country']);
+    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses(implode(', ', $search_terms), $address['country']);
 
     // Show an error if we have no results.
     if (empty($addresses)) {
@@ -243,7 +243,7 @@ function addressfield_lookup_addressfield_postal_code_validate($element, &$form_
         $address['addressfield_lookup_mode'] = 'address_selection';
 
         // Get the full details of the 1st address in the results.
-        $first_address_details = addressfield_lookup_get_address_details($addresses[0]['id']);
+        $first_address_details = \Drupal::service('plugin.manager.address_lookup')->getAddressDetails($addresses[0]['id']);
 
         // Set the common details.
         $address['locality'] = !empty($first_address_details['locality']) ? $first_address_details['locality'] : '';

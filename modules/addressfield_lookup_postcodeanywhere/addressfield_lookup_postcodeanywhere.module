@@ -225,7 +225,7 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
           $pca_predict->setLastId($address_id_parts[0]);
 
           // Perform the extra lookup.
-          $addresses = addressfield_lookup_get_addresses($address['postal_code'], $address['country'], TRUE, TRUE);
+          $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($address['postal_code'], $address['country'], TRUE, TRUE);
 
           // Ensure we have a valid result.
           if (!is_array($addresses)) {
@@ -245,7 +245,7 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
             $address['addressfield_lookup_mode'] = 'address_selection';
 
             // Get the full details of the 1st address in the results.
-            $first_address_details = addressfield_lookup_get_address_details($addresses[0]['id']);
+            $first_address_details = \Drupal::service('plugin.manager.address_lookup')->getAddressDetails($addresses[0]['id']);
 
             // Set the common details.
             $address['locality'] = !empty($first_address_details['locality']) ? $first_address_details['locality'] : '';

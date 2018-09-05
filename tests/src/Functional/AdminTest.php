@@ -29,20 +29,18 @@ class AdminTest extends AddressFieldLookupBrowserTestBase {
     }
 
     // Check for submit buttons.
-    $this->assertFieldByName('op', t('Save configuration'), 'Save configuration button is displayed');
-    $this->assertFieldByName('op', t('Test default service'), 'Test button is displayed');
+    $this->assertFieldByName('op', t('Save configuration'), 'Save configuration button is displayed.');
+    $this->assertFieldByName('op', t('Test default service'), 'Test button is displayed.');
 
     // Test the save configuration button and set the default service.
     $this->submitForm(['default_service' => 'example'], 'Save configuration');
     $this->assertSession()->pageTextContains('Configuration saved.');
 
     // Load the default service and test it is the example service.
-    // @todo
-    //$default_service = addressfield_lookup_get_default_service();
-    //$this->assertEqual($default_service['name'], t('Example'));
+    $default_service = $this->container->get('plugin.manager.address_lookup')->getDefaultId();
+    $this->assertEqual($default_service, 'example');
 
-    // Test the default service is working.
-    $this->markTestIncomplete('testing default service is not implemented yet');
+    // Ensure that the default service is working.
     $this->submitForm([], 'Test default service');
     $this->assertSession()->pageTextContains('The default service (Example) test was successful.', 'Default service tested and working.');
   }
@@ -57,8 +55,8 @@ class AdminTest extends AddressFieldLookupBrowserTestBase {
     $this->getWithPermissions(['administer addressfield lookup services'], 'admin/config/regional/addressfield-lookup/settings');
 
     // Check if the UI elements are displayed.
-    $this->assertFieldByName('addressfield_hide_extra_fields', TRUE, 'Hide extra fields checkbox is displayed');
-    $this->assertFieldByName('cache_length', 3600, 'Cache length field is displayed');
+    $this->assertFieldByName('addressfield_hide_extra_fields', TRUE, 'Hide extra fields checkbox is displayed.');
+    $this->assertFieldByName('cache_length', 3600, 'Cache length field is displayed.');
   }
 
 }

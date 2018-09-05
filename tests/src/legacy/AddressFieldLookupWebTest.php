@@ -141,7 +141,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
     $fake_service = $this->getFakeServiceDefinition();
 
     // Get the default service.
-    $default_service = addressfield_lookup_get_default_service();
+    $default_service = \Drupal::service('plugin.manager.address_lookup')->getDefaultId();
 
     // Test the default service is what we expect.
     $this->assertEqual($default_service, reset($example_service));
@@ -153,7 +153,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
    */
   public function testAddressFieldLookupGetAddresses() {
     // Test with a valid search term.
-    $addresses = addressfield_lookup_get_addresses($this->validSearchTerm);
+    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->validSearchTerm);
 
     // Check there is a result.
     $this->assertTrue(is_array($addresses) && !empty($addresses));
@@ -166,13 +166,13 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
     }
 
     // Test with an invalid search term.
-    $addresses = addressfield_lookup_get_addresses($this->invalidSearchTerm);
+    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->invalidSearchTerm);
 
     // Check there is not a result.
     $this->assertTrue(is_array($addresses) && empty($addresses));
 
     // Test with a valid country code.
-    $addresses = addressfield_lookup_get_addresses($this->validSearchTerm, $this->invalidCountryCode);
+    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->validSearchTerm, $this->invalidCountryCode);
 
     // Check there is not a result.
     $this->assertTrue(is_array($addresses) && empty($addresses));
@@ -183,7 +183,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
    */
   public function testAddressFieldLookupGetAddressDetails() {
     // Get some address results.
-    $addresses = addressfield_lookup_get_addresses($this->validSearchTerm);
+    $addresses = \Drupal::service('plugin.manager.address_lookup')->getAddresses($this->validSearchTerm);
 
     // Check there is a result.
     $this->assertTrue(is_array($addresses) && !empty($addresses));
@@ -199,7 +199,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
     $first_address = reset($addresses);
 
     // Get the address details for a valid ID.
-    $address_details = addressfield_lookup_get_address_details($first_address['id']);
+    $address_details = \Drupal::service('plugin.manager.address_lookup')->getAddressDetails($first_address['id']);
 
     // Check there are some details.
     $this->assertTrue(is_array($address_details) && !empty($address_details));
@@ -210,7 +210,7 @@ class AddressFieldLookupWebTest extends AddressFieldLookupWebTestBase {
     }
 
     // Try to get address details for an invalid address.
-    $address_details = addressfield_lookup_get_address_details(9999);
+    $address_details = \Drupal::service('plugin.manager.address_lookup')->getAddressDetails(9999);
 
     // Check there are no details.
     $this->assertFalse($address_details);

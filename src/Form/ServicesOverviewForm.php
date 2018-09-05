@@ -123,4 +123,52 @@ class ServicesOverviewForm extends FormBase {
     drupal_set_message($this->t('Configuration saved.'));
   }
 
+  /**
+   * Submit handler: Test the default address field lookup services.
+   *
+   * @return bool
+   *   True if testing succeed, false otherwise.
+   */
+  public function testDefaultService() {
+    $service_id = $this->pluginManager->getDefaultId();
+
+    if (!$service_id) {
+      // @todo replace with messenger service.
+      drupal_set_message($this->t('Could not find the default service.'), 'warning');
+      return FALSE;
+    }
+
+    $service_definition = $this->pluginManager->getDefinition($service_id);
+
+    // Check that there is some test data.
+    if (!isset($service_definition['test_data'])) {
+      drupal_set_message($this->t('Could not test the default service (%service_name) as it does not define any test data.', ['%service_name' => $service_definition['label']]), 'warning');
+      return FALSE;
+    }
+
+    // Peform an address search with the default service test data.
+    if ($test_addresses = $this->pluginManager->getAddresses($service_definition['test_data'], NULL, TRUE)) {
+      // Run secondary test to get the full details of the 1st result.
+      if ($test_address_details = $this->pluginManager->getAddressDetails($test_addresses[0]['id'], TRUE)) {
+        // Tidy up.
+        unset($test_addresses);
+        unset($test_address_details);
+
+        // The test passed.
+        drupal_set_message($this->t('The default service (%service_name) test was successful.', array('%service_name' => $service_definition['label'])));
+        return TRUE;
+      }
+      else {
+        // The test failed.
+        drupal_set_message($this->t('The default service (%service_name) test failed. The full address details lookup failed.', array('%service_name' => $service_definition['label'])), 'error');
+        return FALSE;
+      }
+    }
+    else {
+      // The test failed.
+      drupal_set_message($this->t('The default service (%service_name) test failed. The address lookup failed.', array('%service_name' => $service_definition['label'])), 'error');
+      return FALSE;
+    }
+  }
+
 }
