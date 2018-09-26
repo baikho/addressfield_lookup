@@ -274,14 +274,23 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
   }
 
   /**
-   * @todo document.
+   * Returns the timestamp for the current request.
+   *
+   * @return int
+   *   A Unix timestamp.
    */
   protected function getRequestTime() {
     return \Drupal::time()->getRequestTime();
   }
 
   /**
-   * @todo document.
+   * Gets an addressfield_lookup setting.
+   *
+   * @param string $key
+   *   A string that maps to a key within the configuration data.
+   *
+   * @return mixed
+   *   The data that was requested.
    */
   protected function configGet($key) {
     return \Drupal::config('addressfield_lookup.settings')->get($key);
