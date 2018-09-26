@@ -21,21 +21,21 @@ class Example extends AddressLookupBase {
    *
    * @var array
    */
-  protected $mockResults = array(
-    'TS1 1ST' => array(
+  protected $mockResults = [
+    'TS1 1ST' => [
       'id' => 1234,
       'street' => 'Example Street',
       'place' => 'Example City',
-    ),
-  );
+    ],
+  ];
 
   /**
    * A mock set of address details.
    *
    * @var array
    */
-  protected $addressDetails = array(
-    1234 => array(
+  protected $addressDetails = [
+    1234 => [
       'id' => '1234',
       'sub_premise' => '',
       'premise' => '10',
@@ -45,18 +45,18 @@ class Example extends AddressLookupBase {
       'postal_code' => 'TS1 1ST',
       'administrative_area' => 'Example State',
       'organisation_name' => '',
-    ),
-  );
+    ],
+  ];
 
   /**
    * List of supported ISO2 country codes.
    *
    * @var array
    */
-  protected $supportedCountries = array(
+  protected $supportedCountries = [
     'GB',
     'FR',
-  );
+  ];
 
   /**
    * Set the country code for the lookup.
