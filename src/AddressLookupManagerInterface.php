@@ -43,6 +43,11 @@ interface AddressLookupManagerInterface extends PluginManagerInterface {
    *   - id: Address ID
    *   - street: Street (Address Line 1)
    *   - place: Remainder of address.
+   *
+   * @throws \UnexpectedValueException
+   *   When passing an invalid search term, for example an empty string.
+   * @throws \Drupal\addressfield_lookup\Exception\NoServiceAvailableException
+   *   If there isn't a single address lookup service available.
    */
   public function getAddresses($search_term, $country = NULL, $reset = FALSE);
 

@@ -62,6 +62,7 @@ class AddressLookupManagerTest extends UnitTestCase {
         $module_handler->reveal(),
       ])
       ->setMethods([
+        'createInstance',
         'getDefaultId',
         'getDefinition',
         'getCacheBin',
@@ -71,14 +72,11 @@ class AddressLookupManagerTest extends UnitTestCase {
       ])
       ->getMock();
 
-    // Set factory.
-    $factory = $this->prophesize(FactoryInterface::class);
-    $factory->createInstance('example', ['country' => NULL])->willReturn(new Example());
-    $reflection_property = new \ReflectionProperty($this->manager, 'factory');
-    $reflection_property->setAccessible(TRUE);
-    $reflection_property->setValue($this->manager, $factory->reveal());
-
     // Override methods.
+    $this->manager->expects($this->any())
+      ->method('createInstance')
+      ->will($this->returnCallback([$this, 'createExamplePlugin']));
+
     $this->manager->expects($this->any())
       ->method('getDefaultId')
       ->willReturn('example');
@@ -90,7 +88,6 @@ class AddressLookupManagerTest extends UnitTestCase {
         'id' => 'example',
         'label' => 'Example',
         'description' => 'Provides an example address field lookup service.',
-        'factory' => 'addressfield_lookup_example_create',
         'test_data' => 'TS1 1ST',
         'class' => Example::class,
         'provider' => 'addressfield_lookup_example',
@@ -107,6 +104,29 @@ class AddressLookupManagerTest extends UnitTestCase {
     $this->manager->expects($this->any())
       ->method('getRequestTime')
       ->willReturn(time());
+  }
+
+  /**
+   * Callback for creating an example plugin.
+   *
+   * @param string $plugin_id
+   *   The ID of the plugin being instantiated.
+   * @param array $configuration
+   *   An array of configuration relevant to the plugin instance.
+   * The country to search in.
+   *
+   * @return object
+   *   A fully configured plugin instance.
+   */
+  public function createExamplePlugin($plugin_id, array $configuration = [], $country = NULL) {
+    return new Example($configuration, $plugin_id, [
+      'id' => 'example',
+      'label' => 'Example',
+      'description' => 'Provides an example address field lookup service.',
+      'test_data' => 'TS1 1ST',
+      'class' => Example::class,
+      'provider' => 'addressfield_lookup_example',
+    ], $country);
   }
 
   /**
@@ -148,7 +168,6 @@ class AddressLookupManagerTest extends UnitTestCase {
     $this->assertEmpty($addresses);
 
     // Test with an invalid country code.
-    $this->markTestIncomplete('The country code is not passed to plugins yet.');
     $addresses = $this->manager->getAddresses(static::VALID_SEARCH_TERM, static::INVALID_COUNTRY_CODE);
 
     // Assert that there is no result.

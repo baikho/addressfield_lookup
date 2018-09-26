@@ -2,7 +2,7 @@
 
 namespace Drupal\addressfield_lookup_example\Plugin\AddressLookup;
 
-use Drupal\addressfield_lookup\AddressLookupInterface;
+use Drupal\addressfield_lookup\Plugin\AddressLookup\AddressLookupBase;
 
 /**
  * An example Adddress Field Lookup Service.
@@ -11,11 +11,10 @@ use Drupal\addressfield_lookup\AddressLookupInterface;
  *   id = "example",
  *   label = @Translation("Example"),
  *   description = @Translation("Provides an example address field lookup service."),
- *   factory = "addressfield_lookup_example_create",
  *   test_data = "TS1 1ST",
  * )
  */
-class Example implements AddressLookupInterface {
+class Example extends AddressLookupBase {
 
   /**
    * A mock set of lookup results.
@@ -48,15 +47,6 @@ class Example implements AddressLookupInterface {
       'organisation_name' => '',
     ),
   );
-
-  /**
-   * ISO2 country code.
-   *
-   * Defaults to UK.
-   *
-   * @var string
-   */
-  protected $country = 'GB';
 
   /**
    * List of supported ISO2 country codes.

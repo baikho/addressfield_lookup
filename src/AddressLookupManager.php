@@ -2,11 +2,15 @@
 
 namespace Drupal\addressfield_lookup;
 
+use Drupal\addressfield_lookup\Exception\NoServiceAvailableException;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Component\Plugin\Factory\DefaultFactory;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Exception;
+use UnexpectedValueException;
 
 /**
  * Manages address lookup plugins.
@@ -48,6 +52,23 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
   /**
    * {@inheritdoc}
    */
+  public function createInstance($plugin_id, array $configuration = [], $country = NULL) {
+    $plugin_definition = $this->getDefinition($plugin_id);
+    $plugin_class = DefaultFactory::getPluginClass($plugin_id, $plugin_definition);
+    // If the plugin provides a factory method, pass the container to it.
+    if (is_subclass_of($plugin_class, ContainerFactoryPluginInterface::class)) {
+      $plugin = $plugin_class::create(\Drupal::getContainer(), $configuration, $plugin_id, $plugin_definition, $country);
+    }
+    else {
+      $plugin = new $plugin_class($configuration, $plugin_id, $plugin_definition, $country);
+    }
+
+    return $plugin;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getDefaultId() {
     $default_service_name = $this->configGet('default_service');
 
@@ -66,9 +87,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
    * {@inheritdoc}
    */
   public function getDefault($country = NULL) {
-    return $this->createInstance($this->getDefaultId(), [
-      'country' => $country,
-    ]);
+    return $this->createInstance($this->getDefaultId(), [], $country);
   }
 
   /**
@@ -77,23 +96,26 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
   public function getAddresses($search_term, $country = NULL, $reset = FALSE) {
     // Bail out early if we have no search term.
     if (empty($search_term)) {
-      return FALSE;
+      throw new UnexpectedValueException('Invalid search term.');
     }
 
+    // Set country cache key.
+    $country_cache_key = is_null($country) ? 'default' : $country;
+
     // Return the statically cached results if present.
-    if (isset($this->addresses[$search_term]) && !$reset) {
-      return $this->addresses[$search_term];
+    if (isset($this->addresses[$country_cache_key][$search_term]) && !$reset) {
+      return $this->addresses[$country_cache_key][$search_term];
     }
 
     // If there are no statically cached results, do the search.
-    $this->addresses[$search_term] = [];
+    $this->addresses[$country_cache_key][$search_term] = [];
 
     // Get the default service ID.
     $service_id = $this->getDefaultId();
 
     // Bail out if there is no default service.
     if (!isset($service_id)) {
-      return FALSE;
+      throw new NoServiceAvailableException('There is no address lookup service available.');
     }
     $service_definition = $this->getDefinition($service_id);
 
@@ -103,7 +125,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
 
     // Append the country code to the cache ID if present.
     if (!empty($country)) {
-      $addresses_cache_id .= ':' . $country;
+      $addresses_cache_id .= ':' . $country_cache_key;
     }
 
     // Allow the default service module to alter the cache ID.
@@ -114,8 +136,8 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     // Check the cache bin for the address details.
     if (($cached_addresses = $this->getCacheBin('addressfield_lookup_addresses')->get($addresses_cache_id)) && !$reset) {
       // There is cached data so return it.
-      $this->addresses[$search_term] = $cached_addresses->data;
-      return $this->addresses[$search_term];
+      $this->addresses[$country_cache_key][$search_term] = $cached_addresses->data;
+      return $this->addresses[$country_cache_key][$search_term];
     }
 
     // There is no static or Drupal cache data. Do the lookup.
@@ -124,27 +146,27 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
       if ($service = $this->getDefault($country)) {
         // Do the search.
         if ($lookup_results = $service->lookup($search_term)) {
-          $this->addresses[$search_term] = $lookup_results;
+          $this->addresses[$country_cache_key][$search_term] = $lookup_results;
 
           // Cache the addresses.
           $cache_length = $this->getRequestTime() + $this->configGet('cache_length');
-          $this->getCacheBin('addressfield_lookup_addresses')->set($addresses_cache_id, $this->addresses[$search_term], $cache_length);
+          $this->getCacheBin('addressfield_lookup_addresses')->set($addresses_cache_id, $this->addresses[$country_cache_key][$search_term], $cache_length);
         }
         else {
-          $this->addresses[$search_term] = [];
+          $this->addresses[$country_cache_key][$search_term] = [];
         }
 
-        return $this->addresses[$search_term];
+        return $this->addresses[$country_cache_key][$search_term];
       }
       else {
         // No service could be instantiated so bail out.
-        return FALSE;
+        throw new NoServiceAvailableException('There is no address lookup service available.');
       }
     }
     catch (Exception $e) {
       // Failed to get addresses due to an exception, better log it.
       $this->getLogger()->error('Address lookup failed. Reason: @reason', array('@reason' => $e->getMessage()));
-      return FALSE;
+      throw $e;
     }
   }
 
