@@ -176,7 +176,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
   public function getAddressDetails($address_id, $reset = FALSE) {
     // Bail out early if we have no address ID.
     if (empty($address_id)) {
-      return FALSE;
+      throw new UnexpectedValueException('Invalid address ID.');
     }
 
     // Return the statically cached details if present.
@@ -190,7 +190,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
 
     // Bail out if there is no default service.
     if (!isset($service_id)) {
-      return FALSE;
+      throw new NoServiceAvailableException('There is no address lookup service available.');
     }
     $service_definition = $this->getDefinition($service_id);
 
@@ -222,13 +222,13 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
       }
       else {
         // No service could be instantiated so bail out.
-        return FALSE;
+        throw new NoServiceAvailableException('There is no address lookup service available.');
       }
     }
     catch (Exception $e) {
       // Failed to get address details due to an exception, better log it.
       $this->getLogger()->error('Address details retrieval failed. Reason: @reason', array('@reason' => $e->getMessage()));
-      return FALSE;
+      throw $e;
     }
   }
 
@@ -240,7 +240,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     $service_id = $this->getDefaultId();
     // Bail out if there is no default service.
     if (!isset($service_id)) {
-      return FALSE;
+      throw new NoServiceAvailableException('There is no address lookup service available.');
     }
     $service_definition = $this->getDefinition($service_id);
 

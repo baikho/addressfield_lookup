@@ -38,7 +38,7 @@ interface AddressLookupManagerInterface extends PluginManagerInterface {
    * @param bool $reset
    *   Force a reset of the addresses cache for this search term.
    *
-   * @return array $addresses
+   * @return array
    *   Array of search results in the format:
    *   - id: Address ID
    *   - street: Street (Address Line 1)
@@ -59,7 +59,7 @@ interface AddressLookupManagerInterface extends PluginManagerInterface {
    * @param bool $reset
    *   Force a reset of the address details cache for this address ID.
    *
-   * @return mixed $address_details
+   * @return array|false
    *   Array of details for the given address in the format:
    *     id - Address ID
    *     sub_premise - The sub_premise of this address
@@ -74,6 +74,11 @@ interface AddressLookupManagerInterface extends PluginManagerInterface {
    *     in the xNL XML.
    *
    *   Or FALSE.
+   *
+   * @throws \UnexpectedValueException
+   *   When passing an invalid search term, for example an empty string.
+   * @throws \Drupal\addressfield_lookup\Exception\NoServiceAvailableException
+   *   If there isn't a single address lookup service available.
    */
   public function getAddressDetails($address_id, $reset = FALSE);
 
@@ -84,6 +89,9 @@ interface AddressLookupManagerInterface extends PluginManagerInterface {
    *   The address format being generated.
    * @param array $address
    *   The address this format is generated for.
+   *
+   * @throws \Drupal\addressfield_lookup\Exception\NoServiceAvailableException
+   *   If there isn't a single address lookup service available.
    */
   public function getFormatUpdates(array &$format, array $address);
 

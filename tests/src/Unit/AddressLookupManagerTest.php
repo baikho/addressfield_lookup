@@ -26,6 +26,13 @@ class AddressLookupManagerTest extends UnitTestCase {
   const VALID_SEARCH_TERM = 'TS1 1ST';
 
   /**
+   * An address ID that exists on the example service.
+   *
+   * @var int
+   */
+  const EXISTING_ADDRESS_ID = 1234;
+
+  /**
    * An invalid test search term to use for address lookups.
    *
    * @var string
@@ -158,6 +165,26 @@ class AddressLookupManagerTest extends UnitTestCase {
   }
 
   /**
+   * Get a list of array keys expected in an address details result.
+   *
+   * @return array
+   *   Array of array keys.
+   */
+  protected function getAddressDetailKeys() {
+    return [
+      'id',
+      'sub_premise',
+      'premise',
+      'thoroughfare',
+      'dependent_locality',
+      'locality',
+      'postal_code',
+      'administrative_area',
+      'organisation_name',
+    ];
+  }
+
+  /**
    * @covers ::getAddresses
    */
   public function testGetAddresses() {
@@ -208,6 +235,55 @@ class AddressLookupManagerTest extends UnitTestCase {
 
     $this->setExpectedException(NoServiceAvailableException::class);
     $manager->getAddresses(static::VALID_SEARCH_TERM);
+  }
+
+  /**
+   * @covers ::getAddressDetails
+   */
+  public function testGetAddressDetails() {
+    $addresses = $this->manager->getAddresses(static::VALID_SEARCH_TERM);
+
+    // Get the first result.
+    $first_address = reset($addresses);
+
+    // Get the address details for a valid ID.
+    $address_details = $this->manager->getAddressDetails($first_address['id']);
+
+    // Assert that there is a result.
+    $this->assertInternalType('array', $address_details);
+    $this->assertNotEmpty($address_details);
+
+    // Check the address details are in the expected format.
+    foreach ($this->getAddressDetailKeys() as $key) {
+      $this->assertTrue(isset($address_details[$key]));
+    }
+
+    // Try to get address details for an non-existing address.
+    $address_details = $this->manager->getAddressDetails(9999);
+
+    // Assert that there is no result.
+    $this->assertFalse($address_details);
+  }
+
+  /**
+   * @covers ::getAddressDetails
+   */
+  public function testGetAddressDetailsWithInvalidValue() {
+    $this->setExpectedException(UnexpectedValueException::class);
+    $this->manager->getAddressDetails('');
+  }
+
+  /**
+   * @covers ::getAddressDetails
+   */
+  public function testGetAddressDetailsWithNoService() {
+    $manager = $this->createManager();
+    $manager->expects($this->once())
+      ->method('getDefaultId')
+      ->willReturn(NULL);
+
+    $this->setExpectedException(NoServiceAvailableException::class);
+    $manager->getAddressDetails(static::EXISTING_ADDRESS_ID);
   }
 
 }
