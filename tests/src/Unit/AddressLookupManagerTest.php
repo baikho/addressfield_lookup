@@ -3,12 +3,14 @@
 namespace Drupal\Tests\addressfield_lookup;
 
 use Drupal\addressfield_lookup\AddressLookupManager;
+use Drupal\addressfield_lookup\Exception\NoServiceAvailableException;
 use Drupal\addressfield_lookup_example\Plugin\AddressLookup\Example;
 use Drupal\Component\Plugin\Factory\FactoryInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Tests\UnitTestCase;
 use Psr\Log\LoggerInterface;
+use UnexpectedValueException;
 
 /**
  * @coversDefaultClass \Drupal\addressfield_lookup\AddressLookupManager
@@ -50,27 +52,8 @@ class AddressLookupManagerTest extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $cache = $this->prophesize(CacheBackendInterface::class);
-    $module_handler = $this->prophesize(ModuleHandlerInterface::class);
-    $logger = $this->prophesize(LoggerInterface::class);
-
     // Create manager.
-    $this->manager = $this->getMockBuilder(AddressLookupManager::class)
-      ->setConstructorArgs([
-        new \ArrayObject(),
-        $cache->reveal(),
-        $module_handler->reveal(),
-      ])
-      ->setMethods([
-        'createInstance',
-        'getDefaultId',
-        'getDefinition',
-        'getCacheBin',
-        'getLogger',
-        'getRequestTime',
-        'configGet',
-      ])
-      ->getMock();
+    $this->manager = $this->createManager();
 
     // Override methods.
     $this->manager->expects($this->any())
@@ -92,18 +75,49 @@ class AddressLookupManagerTest extends UnitTestCase {
         'class' => Example::class,
         'provider' => 'addressfield_lookup_example',
       ]);
+  }
 
-    $this->manager->expects($this->any())
+  /**
+   * Mocks a address lookup plugin manager.
+   *
+   * @return \Drupal\addressfield_lookup\AddressLookupManager;
+   *   A mocked address lookup plugin manager.
+   */
+  public function createManager() {
+    $cache = $this->prophesize(CacheBackendInterface::class);
+    $module_handler = $this->prophesize(ModuleHandlerInterface::class);
+    $logger = $this->prophesize(LoggerInterface::class);
+
+    $manager = $this->getMockBuilder(AddressLookupManager::class)
+      ->setConstructorArgs([
+        new \ArrayObject(),
+        $cache->reveal(),
+        $module_handler->reveal(),
+      ])
+      ->setMethods([
+        'createInstance',
+        'getDefaultId',
+        'getDefinition',
+        'getCacheBin',
+        'getLogger',
+        'getRequestTime',
+        'configGet',
+      ])
+      ->getMock();
+
+    $manager->expects($this->any())
       ->method('getCacheBin')
       ->willReturn($cache->reveal());
 
-    $this->manager->expects($this->any())
+    $manager->expects($this->any())
       ->method('getLogger')
       ->willReturn($logger->reveal());
 
-    $this->manager->expects($this->any())
+    $manager->expects($this->any())
       ->method('getRequestTime')
       ->willReturn(time());
+
+    return $manager;
   }
 
   /**
@@ -173,6 +187,27 @@ class AddressLookupManagerTest extends UnitTestCase {
     // Assert that there is no result.
     $this->assertInternalType('array', $addresses);
     $this->assertEmpty($addresses);
+  }
+
+  /**
+   * @covers ::getAddresses
+   */
+  public function testGetAddressesWithInvalidSearchTerm() {
+    $this->setExpectedException(UnexpectedValueException::class);
+    $this->manager->getAddresses('');
+  }
+
+  /**
+   * @covers ::getAddresses
+   */
+  public function testGetAddressesWithNoService() {
+    $manager = $this->createManager();
+    $manager->expects($this->once())
+      ->method('getDefaultId')
+      ->willReturn(NULL);
+
+    $this->setExpectedException(NoServiceAvailableException::class);
+    $manager->getAddresses(static::VALID_SEARCH_TERM);
   }
 
 }
