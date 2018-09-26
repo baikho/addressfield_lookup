@@ -3,6 +3,8 @@
 namespace Drupal\addressfield_lookup\Form;
 
 use Drupal\addressfield_lookup\AddressLookupManager;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\ConfigFormBaseTrait;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -12,6 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides an overview form for address field lookup services.
  */
 class ServicesOverviewForm extends FormBase {
+
+  use ConfigFormBaseTrait;
 
   /**
    * The address lookup plugin manager.
@@ -25,9 +29,19 @@ class ServicesOverviewForm extends FormBase {
    *
    * @param \Drupal\addressfield_lookup\AddressLookupManager $plugin_manager
    *   The address lookup plugin manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
    */
-  public function __construct(AddressLookupManager $plugin_manager) {
+  public function __construct(AddressLookupManager $plugin_manager, ConfigFactoryInterface $config_factory) {
     $this->pluginManager = $plugin_manager;
+    $this->setConfigFactory($config_factory);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return ['addressfield_lookup.settings'];
   }
 
   /**
@@ -35,7 +49,8 @@ class ServicesOverviewForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.address_lookup')
+      $container->get('plugin.manager.address_lookup'),
+      $container->get('config.factory')
     );
   }
 
@@ -115,12 +130,10 @@ class ServicesOverviewForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Set the default service.
-    // @todo require config object in constructor.
-    \Drupal::configFactory()->getEditable('addressfield_lookup.settings')->set('default_service', $form_state->getValue(['default_service']))->save();
+    $this->config('addressfield_lookup.settings')->set('default_service', $form_state->getValue(['default_service']))->save();
 
     // Show a message.
-    // @todo replace with messenger service.
-    drupal_set_message($this->t('Configuration saved.'));
+    $this->messenger()->addStatus($this->t('Configuration saved.'));
   }
 
   /**
@@ -133,8 +146,7 @@ class ServicesOverviewForm extends FormBase {
     $service_id = $this->pluginManager->getDefaultId();
 
     if (!$service_id) {
-      // @todo replace with messenger service.
-      drupal_set_message($this->t('Could not find the default service.'), 'warning');
+      $this->messenger()->addWarning($this->t('Could not find the default service.'));
       return FALSE;
     }
 
@@ -142,7 +154,7 @@ class ServicesOverviewForm extends FormBase {
 
     // Check that there is some test data.
     if (!isset($service_definition['test_data'])) {
-      drupal_set_message($this->t('Could not test the default service (%service_name) as it does not define any test data.', ['%service_name' => $service_definition['label']]), 'warning');
+      $this->messenger()->addWarning($this->t('Could not test the default service (%service_name) as it does not define any test data.', ['%service_name' => $service_definition['label']]));
       return FALSE;
     }
 
@@ -155,18 +167,18 @@ class ServicesOverviewForm extends FormBase {
         unset($test_address_details);
 
         // The test passed.
-        drupal_set_message($this->t('The default service (%service_name) test was successful.', array('%service_name' => $service_definition['label'])));
+        $this->messenger()->addStatus($this->t('The default service (%service_name) test was successful.', array('%service_name' => $service_definition['label'])));
         return TRUE;
       }
       else {
         // The test failed.
-        drupal_set_message($this->t('The default service (%service_name) test failed. The full address details lookup failed.', array('%service_name' => $service_definition['label'])), 'error');
+        $this->messenger()->addError($this->t('The default service (%service_name) test failed. The full address details lookup failed.', array('%service_name' => $service_definition['label'])));
         return FALSE;
       }
     }
     else {
       // The test failed.
-      drupal_set_message($this->t('The default service (%service_name) test failed. The address lookup failed.', array('%service_name' => $service_definition['label'])), 'error');
+      $this->messenger()->addError($this->t('The default service (%service_name) test failed. The address lookup failed.', array('%service_name' => $service_definition['label'])));
       return FALSE;
     }
   }
