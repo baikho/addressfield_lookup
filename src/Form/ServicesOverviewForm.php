@@ -7,7 +7,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBaseTrait;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -94,7 +93,7 @@ class ServicesOverviewForm extends FormBase {
           '#title_display' => 'invisible',
           '#return_value' => $id,
           '#id' => 'edit-default-service-' . $id,
-          '#default_value' => (\Drupal::config('addressfield_lookup.settings')->get('default_service') == $id) ? $id : NULL,
+          '#default_value' => ($this->config('addressfield_lookup.settings')->get('default_service') === $id) ? $id : NULL,
         ],
         // @todo
         'operations' => [
@@ -158,7 +157,7 @@ class ServicesOverviewForm extends FormBase {
       return FALSE;
     }
 
-    // Peform an address search with the default service test data.
+    // Perform an address search with the default service test data.
     if ($test_addresses = $this->pluginManager->getAddresses($service_definition['test_data'], NULL, TRUE)) {
       // Run secondary test to get the full details of the 1st result.
       if ($test_address_details = $this->pluginManager->getAddressDetails($test_addresses[0]['id'], TRUE)) {
