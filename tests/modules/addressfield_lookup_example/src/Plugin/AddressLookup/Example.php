@@ -5,7 +5,7 @@ namespace Drupal\addressfield_lookup_example\Plugin\AddressLookup;
 use Drupal\addressfield_lookup\Plugin\AddressLookup\AddressLookupBase;
 
 /**
- * An example Adddress Field Lookup Service.
+ * An example Address Field Lookup Service.
  *
  * @AddressLookup(
  *   id = "example",
@@ -81,10 +81,8 @@ class Example extends AddressLookupBase {
     if (isset($this->mockResults[$term]) && !empty($this->mockResults[$term])) {
       return array($this->mockResults[$term]);
     }
-    else {
-      // No result.
-      return FALSE;
-    }
+    // No result.
+    return FALSE;
   }
 
   /**
@@ -95,10 +93,8 @@ class Example extends AddressLookupBase {
     if (isset($this->addressDetails[$address_id]) && !empty($this->addressDetails[$address_id])) {
       return $this->addressDetails[$address_id];
     }
-    else {
-      // No result.
-      return FALSE;
-    }
+    // No result.
+    return FALSE;
   }
 
 }
