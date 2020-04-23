@@ -23,24 +23,6 @@ class AddressfieldLookupPostcodeanywhereConfigForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('addressfield_lookup_postcodeanywhere.settings');
-
-    foreach (Element::children($form) as $variable) {
-      $config->set($variable, $form_state->getValue($form[$variable]['#parents']));
-    }
-    $config->save();
-
-    if (method_exists($this, '_submitForm')) {
-      $this->_submitForm($form, $form_state);
-    }
-
-    parent::submitForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getEditableConfigNames() {
     return ['addressfield_lookup_postcodeanywhere.settings'];
   }
@@ -81,6 +63,24 @@ class AddressfieldLookupPostcodeanywhereConfigForm extends ConfigFormBase {
     $form['#submit'][] = 'addressfield_lookup_postcodeanywhere_config_form_submit';
 
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $config = $this->config('addressfield_lookup_postcodeanywhere.settings');
+
+    foreach (Element::children($form) as $variable) {
+      $config->set($variable, $form_state->getValue($form[$variable]['#parents']));
+    }
+    $config->save();
+
+    if (method_exists($this, '_submitForm')) {
+      $this->_submitForm($form, $form_state);
+    }
+
+    parent::submitForm($form, $form_state);
   }
 
   /**
