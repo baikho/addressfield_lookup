@@ -145,7 +145,7 @@ class AddressFieldLookupPostcodeAnywhere implements AddressLookupInterface {
    * @param string $last_id
    *   String containing the The Id from a previous Find.
    *
-   * @return AddressFieldLookupInterface
+   * @return AddressLookupInterface
    *   The called object.
    */
   public function setLastId($last_id) {
