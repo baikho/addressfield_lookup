@@ -2,10 +2,12 @@
 
 namespace Drupal\addressfield_lookup_postcodeanywhere;
 
+use Drupal\addressfield_lookup\AddressLookupInterface;
+
 /**
  * Address Field Lookup service for Postcode anywhere.
  */
-class AddressFieldLookupPostcodeAnywhere implements AddressFieldLookupInterface {
+class AddressFieldLookupPostcodeAnywhere implements AddressLookupInterface {
 
   /**
    * API Adapter for PCA Predict.
@@ -148,7 +150,6 @@ class AddressFieldLookupPostcodeAnywhere implements AddressFieldLookupInterface 
    */
   public function setLastId($last_id) {
     $this->lastId = $last_id;
-
     return $this;
   }
 
