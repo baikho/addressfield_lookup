@@ -5,6 +5,8 @@
  * Provides hooks and functions for address field lookup.
  */
 
+use Drupal\Component\Utility\NestedArray;
+
 /**
  * Implements hook_help().
  */
@@ -43,7 +45,7 @@ function addressfield_lookup_flush_caches() {
  */
 function addressfield_lookup_field_widget_form_alter(&$element, &$form_state, $context) {
   // Only apply for address field lookup.
-  if ($context['field']['type'] == 'addressfield' && !empty($element['addressfield_lookup_find_address'])) {
+  if ($context['field']['type'] === 'addressfield' && !empty($element['addressfield_lookup_find_address'])) {
     // Parents array of an addressfield element in a entity form.
     $array_parents = array(
       $context['field']['field_name'],
@@ -113,7 +115,7 @@ function _addressfield_lookup_populate_addressfield($address_id, $element, &$for
   if (!empty($address_id)) {
     // Get the address element from the form.
     $array_parents = array_slice($element['#parents'], 0, -1);
-    $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
+    $address = NestedArray::getValue($form_state['values'], $array_parents);
 
     // Get the full details for this address ID.
     $address_details = \Drupal::service('plugin.manager.address_lookup')->getAddressDetails($address_id);
@@ -138,8 +140,8 @@ function _addressfield_lookup_populate_addressfield($address_id, $element, &$for
       }
 
       // Update the form state, where possible.
-      if (isset($address['element_key']) && isset($form_state['addressfield'][$address['element_key']])) {
-        $form_state['addressfield'][$address['element_key']] = array_diff_key($address, array('element_key' => ''));
+      if (isset($address['element_key'], $form_state['addressfield'][$address['element_key']])) {
+        $form_state['addressfield'][$address['element_key']] = array_diff_key($address, ['element_key' => '']);
       }
 
       // Set the address values on the form.
@@ -148,8 +150,8 @@ function _addressfield_lookup_populate_addressfield($address_id, $element, &$for
         // Note: form_state['input'] must be updated so that
         // addressfield_lookup_addressfield_format_generate() has correct
         // information during the rebuild.
-        \Drupal\Component\Utility\NestedArray::setValue($form_state['values'], array_merge($array_parents, array($key)), $value, TRUE);
-        \Drupal\Component\Utility\NestedArray::setValue($form_state['input'], array_merge($array_parents, array($key)), $value, TRUE);
+        NestedArray::setValue($form_state['values'], array_merge($array_parents, [$key]), $value, TRUE);
+        NestedArray::setValue($form_state['input'], array_merge($array_parents, [$key]), $value, TRUE);
       }
     }
   }

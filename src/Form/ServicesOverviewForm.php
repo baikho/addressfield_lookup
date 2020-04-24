@@ -67,6 +67,7 @@ class ServicesOverviewForm extends FormBase {
     // Get the list of available services.
     $plugins = array_column($this->pluginManager->getDefinitions(), 'label', 'id');
     asort($plugins);
+    $config = $this->config('addressfield_lookup.settings');
 
     $form['services'] = [
       '#type' => 'table',
@@ -89,11 +90,11 @@ class ServicesOverviewForm extends FormBase {
         'default' => [
           '#type' => 'radio',
           '#parents' => ['default_service'],
-          '#title' => t('Set @title as default', ['@title' => $label]),
+          '#title' => $this->t('Set @title as default', ['@title' => $label]),
           '#title_display' => 'invisible',
           '#return_value' => $id,
           '#id' => 'edit-default-service-' . $id,
-          '#default_value' => ($this->config('addressfield_lookup.settings')->get('default_service') === $id) ? $id : NULL,
+          '#default_value' => $config->get('default_service') === $id ? $id : NULL,
         ],
         // @todo
         'operations' => [

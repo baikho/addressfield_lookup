@@ -211,7 +211,7 @@ function _addressfield_lookup_postcodeanywhere_addresses_select_validate($elemen
   if ($element['#id'] == $form_state['triggering_element']['#id']) {
     // Get the address element from the form.
     $array_parents = array_slice($element['#parents'], 0, -1);
-    $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
+    $address = NestedArray::getValue($form_state['values'], $array_parents);
 
     if (!empty($element['#value'])) {
       // The first part of the ID is the actual address ID. The second part is

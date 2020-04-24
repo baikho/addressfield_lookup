@@ -10,7 +10,7 @@ use Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter;
  * Address Field Lookup service for Postcode anywhere.
  *
  * @AddressLookup(
- *   id = "postcodeanywhere",
+ *   id = "postcode_anywhere",
  *   label = @Translation("Postcode Anywhere"),
  *   description = @Translation("The Postcode Anywhere AddressLookup Provider"),
  * )

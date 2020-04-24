@@ -1,6 +1,19 @@
-addressfield_lookup.services_overview_form:
-  route_name: addressfield_lookup.services_overview_form
+addressfield_lookup.overview:
+  route_name: addressfield_lookup.overview
   title: 'Address Field Lookup'
   weight: -10
   description: 'Configure address field lookup services.'
   parent: system.admin_config_regional
+
+addressfield_lookup.services_overview_form:
+  route_name: addressfield_lookup.services_overview_form
+  title: 'Services'
+  weight: -10
+  description: 'Configure address field lookup services.'
+  parent: addressfield_lookup.overview
+
+addressfield_lookup.settings_form:
+  route_name: addressfield_lookup.settings_form
+  title: Settings
+  description: 'Configure address field lookup settings.'
+  parent: addressfield_lookup.overview

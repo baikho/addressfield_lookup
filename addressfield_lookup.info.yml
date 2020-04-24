@@ -2,6 +2,7 @@ name: 'Address Field Lookup'
 description: 'Provides an abstracted API for providing address field lookup services.'
 package: 'Address Field Lookup'
 core: 8.x
+core_version_requirement: ^8 || ^9
 configure: addressfield_lookup.settings_form
 dependencies:
   - address:address
