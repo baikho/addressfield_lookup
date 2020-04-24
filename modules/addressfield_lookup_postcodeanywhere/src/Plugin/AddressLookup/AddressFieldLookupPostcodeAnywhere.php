@@ -5,6 +5,7 @@ namespace Drupal\addressfield_lookup_postcodeanywhere\Plugin\AddressLookup;
 use Drupal\addressfield_lookup\AddressLookupInterface;
 use Drupal\addressfield_lookup\Plugin\AddressLookup\AddressLookupBase;
 use Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Address Field Lookup service for Postcode anywhere.
@@ -36,14 +37,22 @@ class AddressFieldLookupPostcodeAnywhere extends AddressLookupBase {
   protected $lastId = NULL;
 
   /**
-   * Constructor.
-   *
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    return $instance->setAPi($container->get('addressfield_lookup_postcodeanywhere.pca_predict'));
+  }
+
+  /**
    * @param \Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter $api
    *   An instantiated API adapater.
+   *
+   * @return $this;
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, PCAPredictAdapter $api, $country = NULL) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $country);
+  public function setAPi(PCAPredictAdapter $api) {
     $this->api = $api;
+    return $this;
   }
 
   /**

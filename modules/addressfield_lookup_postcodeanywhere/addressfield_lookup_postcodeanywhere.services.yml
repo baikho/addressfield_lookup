@@ -1,0 +1,3 @@
+services:
+  addressfield_lookup_postcodeanywhere.pca_predict:
+    class: Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter
