@@ -166,20 +166,16 @@ class ServicesOverviewForm extends FormBase {
         unset($test_address_details);
 
         // The test passed.
-        $this->messenger()->addStatus($this->t('The default service (%service_name) test was successful.', array('%service_name' => $service_definition['label'])));
+        $this->messenger()->addStatus($this->t('The default service (%service_name) test was successful.', ['%service_name' => $service_definition['label']]));
         return TRUE;
       }
-      else {
-        // The test failed.
-        $this->messenger()->addError($this->t('The default service (%service_name) test failed. The full address details lookup failed.', array('%service_name' => $service_definition['label'])));
-        return FALSE;
-      }
-    }
-    else {
       // The test failed.
-      $this->messenger()->addError($this->t('The default service (%service_name) test failed. The address lookup failed.', array('%service_name' => $service_definition['label'])));
+      $this->messenger()->addError($this->t('The default service (%service_name) test failed. The full address details lookup failed.', ['%service_name' => $service_definition['label']]));
       return FALSE;
     }
+    // The test failed.
+    $this->messenger()->addError($this->t('The default service (%service_name) test failed. The address lookup failed.', ['%service_name' => $service_definition['label']]));
+    return FALSE;
   }
 
 }

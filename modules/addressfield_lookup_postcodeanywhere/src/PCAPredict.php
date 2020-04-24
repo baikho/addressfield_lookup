@@ -87,26 +87,26 @@ abstract class PCAPredict {
    *
    * @var array
    */
-  protected $allowedLanguages = array('English', 'Welsh');
+  protected $allowedLanguages = ['English', 'Welsh'];
 
   /**
    * List of filters support by the PCA Predict API.
    *
    * @var array
    */
-  protected $allowedFilters = array(
+  protected $allowedFilters = [
     'Everything',
     'PostalCodes',
     'Companies',
     'Places',
-  );
+  ];
 
   /**
    * List of valid return formats for the PCA Predict API.
    *
    * @var array
    */
-  protected $validFormats = array('xmla', 'json');
+  protected $validFormats = ['xmla', 'json'];
 
   /**
    * The ISO2 code of the country to search in.
@@ -150,7 +150,7 @@ abstract class PCAPredict {
     }
     else {
       // Not a valid filter.
-      throw new Exception('Requested filter not supported by PCA Predict API.');
+      throw new \Exception('Requested filter not supported by PCA Predict API.');
     }
 
     // Set the country to search in.
@@ -173,7 +173,7 @@ abstract class PCAPredict {
     }
     else {
       // Not a valid format.
-      throw new Exception('Requested data format not supported by PCA Predict API.');
+      throw new \Exception('Requested data format not supported by PCA Predict API.');
     }
 
     return $this;
@@ -216,7 +216,7 @@ abstract class PCAPredict {
       $this->https = $https;
     }
     else {
-      throw new Exception('HTTPS flag must be a boolean.');
+      throw new \Exception('HTTPS flag must be a boolean.');
     }
 
     return $this;
@@ -233,13 +233,13 @@ abstract class PCAPredict {
    * @return string $api_response
    *   Raw API response.
    */
-  protected function callApi($endpoint, $params = array()) {
+  protected function callApi($endpoint, $params = []) {
     // Array parameters that we need on every request.
-    $default_params = array(
+    $default_params = [
       'Key' => $this->key,
       'PreferredLanguage' => $this->preferredLanguage,
       'UserName' => $this->userName,
-    );
+    ];
 
     $params += $default_params;
 
@@ -277,7 +277,7 @@ abstract class PCAPredict {
    * @return string $api_url
    *   URL for the API call.
    */
-  protected function buildApiUrl($endpoint, $params = array()) {
+  protected function buildApiUrl($endpoint, $params = []) {
     // Build the URL string.
     $api_url = $this->https ? 'https' : 'http';
 
@@ -286,7 +286,7 @@ abstract class PCAPredict {
       $api_url .= '://' . $this->root . '/' . $endpoint . '/' . $this->format . '.ws';
     }
     else {
-      throw new Exception('Requested data format not supported by PCA Predict API.');
+      throw new \Exception('Requested data format not supported by PCA Predict API.');
     }
 
     // Build the query string.
@@ -313,7 +313,7 @@ abstract class PCAPredict {
     }
 
     // Array for the parsed response.
-    $parsed_api_response = array();
+    $parsed_api_response = [];
 
     // Parse based on the requested format.
     switch ($this->format) {
@@ -323,7 +323,7 @@ abstract class PCAPredict {
 
         // Check for any errors.
         if (isset($parsed_api_response[0]->Error)) {
-          throw new Exception('Error ' . $parsed_api_response[0]->Error . ' (' . $parsed_api_response[0]->Description . '). ' . $parsed_api_response[0]->Cause . '. Resolution: ' . $parsed_api_response[0]->Resolution);
+          throw new \Exception('Error ' . $parsed_api_response[0]->Error . ' (' . $parsed_api_response[0]->Description . '). ' . $parsed_api_response[0]->Cause . '. Resolution: ' . $parsed_api_response[0]->Resolution);
         }
 
         break;
@@ -334,19 +334,19 @@ abstract class PCAPredict {
 
         // Check for any errors.
         if ($api_xml_response->Columns->Column->attributes()->Name == "Error") {
-          throw new Exception('Error ' . $api_xml_response->Rows->Row->attributes()->Error . ' (' . $api_xml_response->Rows->Row->attributes()->Description . '). ' . $api_xml_response->Rows->Row->attributes()->Cause . '. Resolution: ' . $api_xml_response->Rows->Row->attributes()->Resolution);
+          throw new \Exception('Error ' . $api_xml_response->Rows->Row->attributes()->Error . ' (' . $api_xml_response->Rows->Row->attributes()->Description . '). ' . $api_xml_response->Rows->Row->attributes()->Cause . '. Resolution: ' . $api_xml_response->Rows->Row->attributes()->Resolution);
         }
 
         // Parse the XML.
         if (!empty($api_xml_response->Rows)) {
-          $parsed_api_response = array();
+          $parsed_api_response = [];
 
           $row_count = 0;
 
           // Loop through each XML row.
           foreach ($api_xml_response->Rows->Row as $api_xml_row) {
             // Initialize a new object for this item.
-            $parsed_api_response[$row_count] = new stdClass();
+            $parsed_api_response[$row_count] = new \stdClass();
 
             // Loop through each XML column.
             foreach ($api_xml_response->Columns->Column as $api_xml_column) {

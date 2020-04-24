@@ -3,7 +3,7 @@
 namespace Drupal\addressfield_lookup_postcodeanywhere;
 
 /**
- * Adapater for the PCAPredict API.
+ * Adapter for the PCAPredict API.
  */
 class PCAPredictAdapter extends PCAPredict {
 
@@ -14,11 +14,11 @@ class PCAPredictAdapter extends PCAPredict {
    *
    * @see http://www.pcapredict.com/support/webservices
    */
-  private $endpoints = array(
+  private $endpoints = [
     'Find' => 'CapturePlus/Interactive/Find/v2.10',
     'Retrieve' => 'CapturePlus/Interactive/Retrieve/v2.10',
     'CountryData' => 'Extras/Lists/CountryData/v3.00',
-  );
+  ];
 
   /**
    * Find addresses matching the search term.
@@ -33,11 +33,11 @@ class PCAPredictAdapter extends PCAPredict {
    */
   public function find($term, $lastId = NULL) {
     // Build array of parameters to pass to the API.
-    $params = array(
+    $params = [
       'SearchTerm' => $term,
       'SearchFor' => $this->filter,
       'Country' => $this->country,
-    );
+    ];
 
     // Add the last ID param if present.
     if (!is_null($lastId)) {
@@ -56,7 +56,7 @@ class PCAPredictAdapter extends PCAPredict {
     $api_response = $this->parseApiResponse($api_response);
 
     // Sort the results to show any with a 'Find' next value first.
-    usort($api_response, array($this, 'findResultSort'));
+    usort($api_response, [$this, 'findResultSort']);
 
     return $api_response;
   }
@@ -78,14 +78,14 @@ class PCAPredictAdapter extends PCAPredict {
     $id_parts = explode(':', $id);
 
     // Get the raw API result.
-    $api_response = $this->callApi($this->endpoints[PCAPredict::RETRIEVE_OPERATION], array('Id' => $id_parts[0]));
+    $api_response = $this->callApi($this->endpoints[PCAPredict::RETRIEVE_OPERATION], ['Id' => $id_parts[0]]);
 
     // Bail out if there was no response.
     if (!isset($api_response)) {
       return FALSE;
     }
 
-    // Parse the API repsonse.
+    // Parse the API response.
     return $this->parseApiResponse($api_response);
   }
 
@@ -104,7 +104,7 @@ class PCAPredictAdapter extends PCAPredict {
       return FALSE;
     }
 
-    // Parse the API repsonse.
+    // Parse the API response.
     return $this->parseApiResponse($api_response);
   }
 
@@ -127,18 +127,18 @@ class PCAPredictAdapter extends PCAPredict {
    */
   public function getAddressThoroughfare($address, $building_thoroughfare_component = 'BuildingNumber') {
     // First attempt to use the street values.
-    $thoroughfare = array_filter(array(
+    $thoroughfare = array_filter([
       $address->{$building_thoroughfare_component},
       $address->Street,
       $address->SecondaryStreet,
-    ));
+    ]);
 
     // If we don't have any values, fall back and try to use the LineX values.
     if (empty($thoroughfare)) {
-      $thoroughfare = array_filter(array(
+      $thoroughfare = array_filter([
         $address->Line1,
         $address->Line2,
-      ));
+      ]);
     }
 
     return implode(' ', $thoroughfare);

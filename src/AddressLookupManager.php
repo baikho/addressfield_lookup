@@ -158,14 +158,12 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
 
         return $this->addresses[$country_cache_key][$search_term];
       }
-      else {
-        // No service could be instantiated so bail out.
-        throw new NoServiceAvailableException('There is no address lookup service available.');
-      }
+      // No service could be instantiated so bail out.
+      throw new NoServiceAvailableException('There is no address lookup service available.');
     }
     catch (Exception $e) {
       // Failed to get addresses due to an exception, better log it.
-      $this->getLogger()->error('Address lookup failed. Reason: @reason', array('@reason' => $e->getMessage()));
+      $this->getLogger()->error('Address lookup failed. Reason: @reason', ['@reason' => $e->getMessage()]);
       throw $e;
     }
   }
@@ -220,14 +218,12 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
 
         return $this->addressDetails[$address_id];
       }
-      else {
-        // No service could be instantiated so bail out.
-        throw new NoServiceAvailableException('There is no address lookup service available.');
-      }
+      // No service could be instantiated so bail out.
+      throw new NoServiceAvailableException('There is no address lookup service available.');
     }
     catch (Exception $e) {
       // Failed to get address details due to an exception, better log it.
-      $this->getLogger()->error('Address details retrieval failed. Reason: @reason', array('@reason' => $e->getMessage()));
+      $this->getLogger()->error('Address details retrieval failed. Reason: @reason', ['@reason' => $e->getMessage()]);
       throw $e;
     }
   }

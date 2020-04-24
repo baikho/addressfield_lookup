@@ -19,13 +19,13 @@ function addressfield_lookup_postcodeanywhere_schema() {
  * Implements hook_requirements().
  */
 function addressfield_lookup_postcodeanywhere_requirements($phase) {
-  $requirements = array();
+  $requirements = [];
 
   if ($phase == 'runtime') {
     // Add a requirement for a working default addressfield lookup service.
-    $requirements['addressfield_lookup_postcodeanywhere'] = array(
+    $requirements['addressfield_lookup_postcodeanywhere'] = [
       'title' => t('Address Field Lookup - Postcode Anywhere'),
-    );
+    ];
 
     // Determine the status of the requirement.
     if (!\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {

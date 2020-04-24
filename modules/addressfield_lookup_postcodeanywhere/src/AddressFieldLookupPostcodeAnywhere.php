@@ -48,16 +48,16 @@ class AddressFieldLookupPostcodeAnywhere implements AddressLookupInterface {
     }
 
     // Build the format we need.
-    $results = array();
+    $results = [];
 
     foreach ($api_response as $api_response_item) {
       // Build the result array. Note that we are building a composite ID from
       // the actual Id value and the 'Next' operation.
-      $result = array(
+      $result = [
         'id' => $api_response_item->Id . ':' . $api_response_item->Next,
         'street' => trim(preg_replace("/{$term}\,/si", '', $api_response_item->Text)),
         'place' => !empty($api_response_item->Description) ? '(' . $api_response_item->Description . ')' : '',
-      );
+      ];
 
       $results[] = $result;
     }
@@ -77,9 +77,9 @@ class AddressFieldLookupPostcodeAnywhere implements AddressLookupInterface {
     }
 
     // Address details array.
-    $address_details = array(
+    $address_details = [
       'id' => $address_id,
-    );
+    ];
 
     // Sub premise.
     if (!empty($api_response[0]->SubBuilding)) {

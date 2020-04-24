@@ -10,14 +10,14 @@
  */
 function addressfield_lookup_postcodeanywhere_addressfield_lookup_service_info() {
   return array(
-    'postcodeanywhere' => array(
+    'postcodeanywhere' => [
       'name' => t('Postcode Anywhere'),
       'class' => 'AddressFieldLookupPostcodeAnywhere',
       'object factory' => 'addressfield_lookup_postcodeanywhere_create',
       'description' => t('Provides an address field lookup service based on integration with the PCA Predict (formerly Postcode Anywhere) API.'),
       'config path' => 'admin/config/regional/addressfield-lookup/postcodeanywhere/configure',
       'test data' => 'LL11 5HJ',
-    ),
+    ],
   );
 }
 
@@ -61,20 +61,20 @@ function addressfield_lookup_postcodeanywhere_addressfield_lookup_format_update(
   // logic for the address selection element.
   if (isset($address['addressfield_lookup_mode']) && $address['addressfield_lookup_mode'] == 'address_selection') {
     $format['addressfield_lookup_addresses_select']['#ajax']['callback'] = 'addressfield_lookup_postcodeanywhere_standard_widget_refresh';
-    $format['addressfield_lookup_addresses_select']['#element_validate'] = array('_addressfield_lookup_postcodeanywhere_addresses_select_validate');
+    $format['addressfield_lookup_addresses_select']['#element_validate'] = ['_addressfield_lookup_postcodeanywhere_addresses_select_validate'];
   }
 
   // Add new GB address elements if the address country is GB.
   if ($address['country'] == 'GB') {
     // Add the 'sub premise' element if it is not defined.
     if (empty($format['street_block']['sub_premise'])) {
-      $format['street_block']['sub_premise'] = array(
+      $format['street_block']['sub_premise'] = [
         '#title' => t('Flat No.'),
         '#tag' => 'div',
-        '#attributes' => array('class' => array('sub-premise')),
+        '#attributes' => ['class' => ['sub-premise']],
         '#size' => 30,
         '#weight' => -10,
-      );
+      ];
 
       // Re-order the form elements considering 'sub premise' element.
       $format['street_block']['premise']['#weight'] = -9;
@@ -82,12 +82,12 @@ function addressfield_lookup_postcodeanywhere_addressfield_lookup_format_update(
 
     // Add the 'dependent locality' element if it is not defined.
     if (empty($format['locality_block']['dependent_locality'])) {
-      $format['locality_block']['dependent_locality'] = array(
+      $format['locality_block']['dependent_locality'] = [
         '#title' => t('Address 2'),
         '#tag' => 'div',
-        '#attributes' => array('class' => array('dependent-locality')),
+        '#attributes' => ['class' => ['dependent-locality']],
         '#size' => 30,
-      );
+      ];
     }
 
     // Rename the form elements considering 'dependent locality' element.
@@ -162,8 +162,8 @@ function addressfield_lookup_postcodeanywhere_standard_widget_refresh($form, $fo
 // Calling _theme() directly can alter the expected output and potentially
 // introduce security issues (see https://www.drupal.org/node/2195739). You
 // should use renderable arrays instead.
-// 
-// 
+//
+//
 // @see https://www.drupal.org/node/2195739
 // $element['#prefix'] .= theme('status_messages');
 
@@ -332,7 +332,7 @@ function _addressfield_lookup_postcodeanywhere_get_countries($reset = FALSE) {
   });
 
   // Build out countries list.
-  $countries = array();
+  $countries = [];
 
   foreach ($api_countries as $api_country) {
     $countries[$api_country->Country] = $api_country->Name;

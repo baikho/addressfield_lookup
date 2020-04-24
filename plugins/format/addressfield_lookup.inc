@@ -5,22 +5,22 @@
  * Address Field handler based on the 'Address Field Lookup' module API.
  */
 
-$plugin = array(
+$plugin = [
   'title' => t('Address Field Lookup'),
   'format callback' => 'addressfield_lookup_addressfield_format_generate',
   'type' => 'address',
   'weight' => 10,
-);
+];
 
 /**
  * Format callback.
  *
  * @see CALLBACK_addressfield_format_callback()
  */
-function addressfield_lookup_addressfield_format_generate(&$format, &$address, $context = array()) {
+function addressfield_lookup_addressfield_format_generate(&$format, &$address, $context = []) {
   // Only run in when the address field form is shown and the currently
   // selected country has a useable postcode field.
-  if ($context['mode'] == 'form' && _addressfield_lookup_country_format_has_postal_code($format)) {
+  if ($context['mode'] === 'form' && _addressfield_lookup_country_format_has_postal_code($format)) {
     // Check there is a default 'address field lookup service'.
     if (\Drupal::service('plugin.manager.address_lookup')->getDefaultId()) {
       // Get the address wrapper ID.
@@ -33,13 +33,13 @@ function addressfield_lookup_addressfield_format_generate(&$format, &$address, $
       //
       // @see https://drupal.org/node/2191109
       $instance = $context['instance'];
-      $element_key = implode('_', array(
+      $element_key = implode('_', [
         $instance['entity_type'],
         $instance['bundle'],
         $instance['field_name'],
         $context['langcode'],
         $context['delta'],
-      ));
+      ]);
 
       // Initialize address field lookup.
       if (empty($address['addressfield_lookup_mode'])) {
@@ -205,7 +205,7 @@ function addressfield_lookup_addressfield_postal_code_validate($element, &$form_
     $address = \Drupal\Component\Utility\NestedArray::getValue($form_state['values'], $array_parents);
 
     // Build an array of search terms.
-    $search_terms = array();
+    $search_terms = [];
 
     // Add the house number value if populated.
     if (!empty($address['addressfield_lookup_house_number'])) {
