@@ -1,18 +1,26 @@
 <?php
 
-namespace Drupal\addressfield_lookup_postcodeanywhere;
+namespace Drupal\addressfield_lookup_postcodeanywhere\Plugin\AddressLookup;
 
 use Drupal\addressfield_lookup\AddressLookupInterface;
+use Drupal\addressfield_lookup\Plugin\AddressLookup\AddressLookupBase;
+use Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter;
 
 /**
  * Address Field Lookup service for Postcode anywhere.
+ *
+ * @AddressLookup(
+ *   id = "postcodeanywhere",
+ *   label = @Translation("Postcode Anywhere"),
+ *   description = @Translation("The Postcode Anywhere AddressLookup Provider"),
+ * )
  */
-class AddressFieldLookupPostcodeAnywhere implements AddressLookupInterface {
+class AddressFieldLookupPostcodeAnywhere extends AddressLookupBase {
 
   /**
    * API Adapter for PCA Predict.
    *
-   * @var PCAPredict
+   * @var \Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter
    *
    * @see PCAPredictAdapter
    * @see PCAPredict
@@ -29,10 +37,11 @@ class AddressFieldLookupPostcodeAnywhere implements AddressLookupInterface {
   /**
    * Constructor.
    *
-   * @param PCAPredict $api
+   * @param \Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter $api
    *   An instantiated API adapater.
    */
-  public function __construct(PCAPredict $api) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PCAPredictAdapter $api, $country = NULL) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $country);
     $this->api = $api;
   }
 

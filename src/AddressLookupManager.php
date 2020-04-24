@@ -2,6 +2,7 @@
 
 namespace Drupal\addressfield_lookup;
 
+use Drupal\addressfield_lookup\Annotation\AddressLookup;
 use Drupal\addressfield_lookup\Exception\NoServiceAvailableException;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Plugin\Factory\DefaultFactory;
@@ -43,7 +44,13 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/AddressLookup', $namespaces, $module_handler, 'Drupal\addressfield_lookup\AddressLookupInterface', 'Drupal\addressfield_lookup\Annotation\AddressLookup');
+    parent::__construct(
+      'Plugin/AddressLookup',
+      $namespaces,
+      $module_handler,
+      AddressLookupInterface::class,
+      AddressLookup::class
+    );
 
     $this->alterInfo('addressfield_lookup_service_info');
     $this->setCacheBackend($cache_backend, 'addressfield_lookup_plugins');
@@ -100,7 +107,7 @@ class AddressLookupManager extends DefaultPluginManager implements AddressLookup
     }
 
     // Set country cache key.
-    $country_cache_key = is_null($country) ? 'default' : $country;
+    $country_cache_key = $country === NULL ? 'default' : $country;
 
     // Return the statically cached results if present.
     if (isset($this->addresses[$country_cache_key][$search_term]) && !$reset) {

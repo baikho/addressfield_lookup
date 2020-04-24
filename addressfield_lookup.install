@@ -11,7 +11,7 @@
 function addressfield_lookup_requirements($phase) {
   $requirements = [];
 
-  if ($phase == 'runtime') {
+  if ($phase === 'runtime') {
     // Add a requirement for a working default addressfield lookup service.
     $requirements['addressfield_lookup_default_service'] = [
       'title' => t('Address Field Lookup - Default service'),

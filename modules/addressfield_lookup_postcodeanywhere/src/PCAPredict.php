@@ -195,7 +195,7 @@ abstract class PCAPredict {
     }
     else {
       // Not a valid filter.
-      throw new Exception('Requested filter not supported by PCA Predict API.');
+      throw new \Exception('Requested filter not supported by PCA Predict API.');
     }
 
     return $this;
@@ -260,7 +260,7 @@ abstract class PCAPredict {
 
     // Throw an exception if the repsonse code was not 200.
     if ($api_response_code != 200) {
-      throw new Exception('Could not reach the PCA Predict API.');
+      throw new \Exception('Could not reach the PCA Predict API.');
     }
 
     return $api_response;
@@ -379,12 +379,10 @@ abstract class PCAPredict {
     if ($a->Next == $b->Next) {
       return 0;
     }
-    elseif ($a->Next === PCAPredict::FIND_OPERATION && $b->Next === PCAPredict::RETRIEVE_OPERATION) {
+    if ($a->Next === self::FIND_OPERATION && $b->Next === self::RETRIEVE_OPERATION) {
       return -1;
     }
-    else {
-      return 1;
-    }
+    return 1;
   }
 
 }

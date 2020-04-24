@@ -162,8 +162,7 @@ class ServicesOverviewForm extends FormBase {
       // Run secondary test to get the full details of the 1st result.
       if ($test_address_details = $this->pluginManager->getAddressDetails($test_addresses[0]['id'], TRUE)) {
         // Tidy up.
-        unset($test_addresses);
-        unset($test_address_details);
+        unset($test_addresses, $test_address_details);
 
         // The test passed.
         $this->messenger()->addStatus($this->t('The default service (%service_name) test was successful.', ['%service_name' => $service_definition['label']]));
