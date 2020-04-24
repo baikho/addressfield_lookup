@@ -13,6 +13,7 @@ use Drupal\addressfield_lookup_postcodeanywhere\PCAPredictAdapter;
  *   id = "postcode_anywhere",
  *   label = @Translation("Postcode Anywhere"),
  *   description = @Translation("The Postcode Anywhere AddressLookup Provider"),
+ *   route = "loqate.loqate_api_key_config_form",
  * )
  */
 class AddressFieldLookupPostcodeAnywhere extends AddressLookupBase {

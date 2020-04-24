@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBaseTrait;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -80,6 +81,16 @@ class ServicesOverviewForm extends FormBase {
     ];
 
     foreach ($plugins as $id => $label) {
+
+      $instance = $this->pluginManager->createInstance($id);
+      $route = $instance->getPluginDefinition()['route'];
+      $operations = [
+        'edit' => [
+          'title' => $this->t('Edit'),
+          'url' => Url::fromRoute($route),
+        ],
+      ];
+
       $form['services'][$id] = [
         'id' => [
           '#markup' => $this->t('@service_name <small> (Machine name: @service_id)</small>', [
@@ -96,11 +107,10 @@ class ServicesOverviewForm extends FormBase {
           '#id' => 'edit-default-service-' . $id,
           '#default_value' => $config->get('default_service') === $id ? $id : NULL,
         ],
-        // @todo
         'operations' => [
           'data' => [
             '#type' => 'operations',
-            '#links' => [],
+            '#links' => $operations,
           ],
         ],
       ];
