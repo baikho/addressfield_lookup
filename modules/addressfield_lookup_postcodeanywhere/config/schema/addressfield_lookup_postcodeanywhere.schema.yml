@@ -1,9 +1,9 @@
 addressfield_lookup_postcodeanywhere.settings:
   type: mapping
-  label: Instellingen
+  label: Settings
   mapping:
     addressfield_lookup_postcodeanywhere_license:
-      type: boolean
+      type: string
     addressfield_lookup_postcodeanywhere_login:
       type: boolean
     addressfield_lookup_postcodeanywhere_country_quality:

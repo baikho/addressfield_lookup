@@ -32,7 +32,7 @@ class AddressfieldLookupPostcodeanywhereConfigForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $config = $this->config('addressfield_lookup.settings');
+    $config = $this->config('addressfield_lookup_postcodeanywhere.settings');
 
     $form['addressfield_lookup_postcodeanywhere_login'] = [
       '#title' => $this->t('Login'),
