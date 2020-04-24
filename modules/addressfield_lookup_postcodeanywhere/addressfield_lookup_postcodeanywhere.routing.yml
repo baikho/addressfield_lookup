@@ -1,7 +1,0 @@
-addressfield_lookup_postcodeanywhere.config_form:
-  path: /admin/config/regional/addressfield-lookup/services/postcode-anywhere
-  defaults:
-    _title: 'Postcode Anywhere Settings'
-    _form: \Drupal\addressfield_lookup_postcodeanywhere\Form\AddressfieldLookupPostcodeanywhereConfigForm
-  requirements:
-    _permission: 'administer addressfield lookup services'
