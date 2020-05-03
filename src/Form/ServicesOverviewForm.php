@@ -83,11 +83,11 @@ class ServicesOverviewForm extends FormBase {
     foreach ($plugins as $id => $label) {
 
       $instance = $this->pluginManager->createInstance($id);
-      $route = $instance->getPluginDefinition()['route'];
+      $service_definition = $instance->getPluginDefinition();
       $operations = [
         'edit' => [
           'title' => $this->t('Edit'),
-          'url' => Url::fromRoute($route),
+          'url' => Url::fromRoute($service_definition['route']),
         ],
       ];
 

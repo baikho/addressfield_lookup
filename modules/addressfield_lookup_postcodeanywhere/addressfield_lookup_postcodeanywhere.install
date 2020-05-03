@@ -28,7 +28,7 @@ function addressfield_lookup_postcodeanywhere_requirements($phase) {
     ];
 
     // Determine the status of the requirement.
-    if (!\Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {
+    if (!\Drupal::config('loqate.loqateapikeyconfig')->get('loqate_api_key')) {
       // No default service available.
       $requirements['addressfield_lookup_postcodeanywhere']['value'] = t('Not configured');
       $requirements['addressfield_lookup_postcodeanywhere']['severity'] = REQUIREMENT_WARNING;
@@ -85,8 +85,8 @@ function addressfield_lookup_postcodeanywhere_update_7001() {
 // // to ensure that it uses the correct configuration object.
 // $postcodeanywhere_license = variable_get('postcodeanywhere_license', FALSE);
 
-  if (FALSE !== $postcodeanywhere_license && FALSE !== \Drupal::config('addressfield_lookup_postcodeanywhere.settings')->get('addressfield_lookup_postcodeanywhere_license')) {
-    \Drupal::configFactory()->getEditable('addressfield_lookup_postcodeanywhere.settings')->set('addressfield_lookup_postcodeanywhere_license', $postcodeanywhere_license)->save();
+  if (FALSE !== $postcodeanywhere_license && FALSE !== \Drupal::config('loqate.loqateapikeyconfig')->get('loqate_api_key')) {
+    \Drupal::configFactory()->getEditable('loqate.loqateapikeyconfig')->set('loqate_api_key', $postcodeanywhere_license)->save();
     // @FIXME
 // // @FIXME
 // // This looks like another module's variable. You'll need to rewrite this call

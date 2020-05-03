@@ -13,8 +13,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @AddressLookup(
  *   id = "postcode_anywhere",
  *   label = @Translation("Postcode Anywhere"),
- *   description = @Translation("The Postcode Anywhere AddressLookup Provider"),
+ *   description = @Translation("Provides an address field lookup service based on integration with the PCA Predict (formerly Postcode Anywhere) API."),
  *   route = "loqate.loqate_api_key_config_form",
+ *   test_data = "LL11 5HJ",
  * )
  */
 class AddressFieldLookupPostcodeAnywhere extends AddressLookupBase {
